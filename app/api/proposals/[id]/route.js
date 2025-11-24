@@ -1,4 +1,3 @@
-// app/api/proposals/[id]/route.js
 
 import { connectDB } from "@/lib/db";
 import Proposal from "@/models/Proposal";
@@ -7,8 +6,7 @@ export async function GET(req, context) {
   try {
     await connectDB();
 
-    // ⬅️ Unwrap params properly
-    const { id } = await context.params;
+    const { id } = context.params;
 
     const proposal = await Proposal.findById(id);
 
@@ -39,16 +37,14 @@ export async function DELETE(req, context) {
   try {
     await connectDB();
 
-    const { id } = await context.params;
+    const { id } = context.params;
 
     const deleteProposal = await Proposal.findByIdAndDelete(id);
 
     if (!deleteProposal) {
       return Response.json(
-        { success: false, message: "Proposal for found" },
-        {
-          status: 404,
-        }
+        { success: false, message: "Proposal not found" },
+        { status: 404 }
       );
     }
 
@@ -56,14 +52,12 @@ export async function DELETE(req, context) {
       {
         success: true,
         message: "Proposal deleted successfully",
-        data:deleteProposal
+        data: deleteProposal,
       },
-      {
-        status: 200,
-      }
+      { status: 200 }
     );
   } catch (error) {
-     console.log("DELETE Proposal Error:", error);
+    console.log("DELETE Proposal Error:", error);
     return Response.json(
       { success: false, message: "Server error" },
       { status: 500 }
