@@ -7,21 +7,43 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from "@/components/ui/sheet";
-import { getAllCustomerServices } from "@/service/customer";
+import {
+  deleteCustomerServices,
+  getAllCustomerServices,
+} from "@/service/customer";
 import { Eye, FilePlusCorner, SquarePen, Trash } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 const AllCustomer = () => {
   const [customerList, setCustomerList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [customerSiderbar, setCustomerSiderbar] = useState(false);
+  const [customerCreated, setCustomerCreated] = useState("");
+  const [customerDeleted, setCustomerDeleted] = useState("");
+  const [customerDetails, setCustomerDetails] = useState(null);
+
+  async function handleDeleteCustomer(id) {
+    try {
+      const response = await deleteCustomerServices(id);
+      console.log(response);
+      if (response.success) {
+        toast.success(response.message);
+        setCustomerDeleted(id);
+      }
+    } catch (error) {
+      toast.error(error.message);
+      console.log(error);
+    }
+  }
 
   const fetchAllCustomer = async () => {
     try {
       setLoading(true);
       const response = await getAllCustomerServices();
+
       if (response.success) {
         toast.success("Customer list fetched");
         setCustomerList(response.data);
@@ -34,29 +56,49 @@ const AllCustomer = () => {
     }
   };
 
+  async function handleEditCustomer(id) {
+    console.log(id);
+    try {
+      const response = await getCustomerServices(id);
+      console.log(response);
+      if (response.success) {
+        toast.success("Customer details fetched");
+        setCustomerDetails(response.data);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+    }
+  }
+
   useEffect(() => {
     fetchAllCustomer();
-  }, []);
+  }, [customerCreated, customerDeleted]);
 
   return (
     <div>
       <p className="text-center font-bold text-2xl">All Customer</p>
 
-      <Sheet>
-        <SheetTrigger asChild>
-          <div className="fixed bottom-5 right-5 h-20 w-20 bg-blue-300 flex items-center justify-center rounded-full">
-            <FilePlusCorner size={30} />
-          </div>
-        </SheetTrigger>
+      <Sheet
+        open={customerSiderbar}
+        onOpenChange={() => setCustomerSiderbar(!customerSiderbar)}
+      >
+        <div
+          onClick={() => setCustomerSiderbar(!customerSiderbar)}
+          className="fixed bottom-5 right-5 h-20 w-20 bg-blue-300 flex items-center justify-center rounded-full"
+        >
+          <FilePlusCorner size={30} />
+        </div>
         <SheetContent className={"p-5"}>
           <SheetHeader className={"sr-only"}>
-            <SheetTitle>Are you absolutely sure?</SheetTitle>
-            <SheetDescription>
-              This action cannot be undone. This will permanently delete your
-              account and remove your data from our servers.
-            </SheetDescription>
+            <SheetTitle>handleDeleteCustomer</SheetTitle>
+            <SheetDescription>dec</SheetDescription>
           </SheetHeader>
-          <CreateCustomer />
+          <CreateCustomer
+          customerDetails={customerDetails}
+            setCustomerSiderbar={setCustomerSiderbar}
+            setCustomerCreated={setCustomerCreated}
+          />
         </SheetContent>
       </Sheet>
 
@@ -69,30 +111,33 @@ const AllCustomer = () => {
             <div>Name</div>
             <div>Phone</div>
             <div>GST</div>
-            <div>City</div>
+            <div>Address</div>
             <div>Actions</div>
           </div>
           {customerList.map((item, idx) => {
             return (
               <div
                 key={item?._id}
-                className={`bg-zinc-100 ${
-                  idx && "bg-zinc-200"
-                } grid grid-cols-6 gap-3 py-3 px-3 hover:bg-white duration-300`}
+                className={`grid grid-cols-6 gap-3 py-3 px-3 hover:bg-white duration-300 border-b`}
               >
                 <div>{item?.company}</div>
                 <div>{item?.name}</div>
                 <div>{item?.phone}</div>
                 <div>{item?.GSTIN}</div>
-                <div>{item?.city}</div>
+                <div>{item?.Address?.slice(0, 20)}...</div>
                 <div className="flex items-center gap-8">
-                  <div>
+                  <Link href={`/customer/${item?._id}`}>
                     <Eye />
-                  </div>
-                  <div>
+                  </Link>
+                  <div
+                    onClick={() => {
+                      handleEditCustomer(item?._id);
+                      setCustomerSiderbar(!customerSiderbar);
+                    }}
+                  >
                     <SquarePen />
                   </div>
-                  <div>
+                  <div onClick={() => handleDeleteCustomer(item?._id)}>
                     <Trash />
                   </div>
                 </div>

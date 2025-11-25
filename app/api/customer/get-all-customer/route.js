@@ -6,8 +6,8 @@ export async function GET(req) {
     await connectDB();
 
     const allCustomer = await Customer.find().select(
-      "name company phone GSTIN city"
-    );
+      "name company phone GSTIN Address"
+    ).sort({ createdAt: -1 });
     if (!allCustomer) {
       return Response.json({
         success: false,
