@@ -40,7 +40,7 @@ export const addProposalFormControl = [
     componentType: "input",
     type: "date",
   },
-   {
+  {
     label: "Payment Method",
     name: "paymentMethod",
     componentType: "select",
@@ -50,5 +50,123 @@ export const addProposalFormControl = [
       { id: "cash", label: "Cash" },
       { id: "bank", label: "Bank" },
     ],
+  },
+];
+export const addInvoiceFormControl = [
+  {
+    label: "Client Name",
+    name: "clientName",
+    componentType: "input",
+    type: "text",
+    placeholder: "Enter product clientName",
+  },
+  {
+    label: "Client Company",
+    name: "clientCompany",
+    componentType: "input",
+    type: "text",
+    placeholder: "Enter product clientCompany",
+  },
+  {
+    label: "Client Address",
+    name: "clientAddress",
+    componentType: "input",
+    type: "text",
+    placeholder: "Enter product clientAddress",
+  },
+  {
+    label: "GSTIN",
+    name: "GSTIN",
+    componentType: "input",
+    type: "text",
+    placeholder: "Enter product GSTIN",
+  },
+  {
+    label: "Type Of Tax",
+    name: "taxType",
+    componentType: "select",
+    options: [
+      { id: "SGST/CGST", label: "SGST/CGST" },
+      { id: "IGST", label: "IGST" },
+    ],
+  },
+];
+
+export const addCustomerFormControl = [
+  {
+    label: "Client Name",
+    name: "name",
+    componentType: "input",
+    type: "text",
+    placeholder: "Enter Client Name",
+  },
+  {
+    label: "Client Company",
+    name: "company",
+    componentType: "input",
+    type: "text",
+    placeholder: "Enter Client Company",
+  },
+  {
+    label: "GST No.",
+    name: "GSTIN",
+    componentType: "input",
+    type: "text",
+    placeholder: "Enter GST No",
+  },
+  {
+    label: "Phone no.",
+    name: "phone",
+    componentType: "input",
+    type: "number",
+    placeholder: "Enter Contact No",
+  },
+  {
+    label: "Website name",
+    name: "website",
+    componentType: "input",
+    type: "text",
+    placeholder: "Enter Website url",
+  },
+  {
+    label: "Address",
+    name: "Address",
+    componentType: "input",
+    type: "text",
+    placeholder: "Enter client address",
+  },
+  {
+    label: "City",
+    name: "city",
+    componentType: "input",
+    type: "text",
+    placeholder: "Enter client city",
+  },
+  {
+    label: "State",
+    name: "state",
+    componentType: "input",
+    type: "text",
+    placeholder: "Enter client state",
+  },
+  {
+    label: "Pincode",
+    name: "pincode",
+    componentType: "input",
+    type: "text",
+    placeholder: "Enter Pincode",
+  },
+  {
+    label: "Country",
+    name: "country",
+    componentType: "input",
+    type: "text",
+    placeholder: "Enter country",
+  },
+  {
+    label: "Meeting Date",
+    name: "meetingDate",
+    componentType: "input",
+    type: "date",
   },
 ];

@@ -1,24 +1,21 @@
 "use client";
-import Form from "@/components/layout/Form";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { addProposalFormControl } from "@/config/data";
-import {
-  initialPerposelFormData,
-  initialservicesFormData,
-} from "@/config/initialFormDate";
-import { createProposelService } from "@/service";
-
 import React, { useState } from "react";
-import toast from "react-hot-toast";
+import CommonForm from "../layout/Form";
+import { addInvoiceFormControl } from "@/config/data";
+import {
+  initialInvoiceFormData,
+  initialservicesforInvoiceFormData,
+} from "@/config/initialFormDate";
+import { Label } from "../ui/label";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
 
-const Proposal = () => {
-  const [formData, setFormData] = useState(initialPerposelFormData);
+const CreateInvoice = () => {
+  const [formData, setFormData] = useState(initialInvoiceFormData);
   const [serviceList, setServiceList] = useState([]);
-  const [serviceData, setServiceData] = useState(initialservicesFormData);
-
+  const [serviceData, setServiceData] = useState(
+    initialservicesforInvoiceFormData
+  );
 
   function handleService(e) {
     e.preventDefault();
@@ -26,92 +23,41 @@ const Proposal = () => {
 
     setServiceData({
       serviceName: "",
-      duration: "",
+      HSN: "",
       price: "",
     });
   }
 
+  const handleInvoiceSubmit = async (e) => {
+    e.preventDefault();
 
+    const { clientName, clientCompany, clientAddress, GSTIN, taxType } =
+      formData;
 
-  const {
-    clientName,
-    clientCompany,
-    clientAddress,
-    GSTIN,
-    discount,
-    validTill,
-    paymentMethod,
-  } = formData;
+    const invoiceData = {
+      clientName,
+      clientCompany,
+      clientAddress,
+      GSTIN,
+      taxType,
+      services: serviceList,
+    };
+
+    console.log(invoiceData);
+  };
 
   function handleRemoveService(indexToRemove) {
     setServiceList(serviceList.filter((_, index) => index !== indexToRemove));
   }
 
- 
-
-  async function handleSubmit(e) {
-    e.preventDefault();
-
-    if (
-      !clientName ||
-      !clientCompany ||
-      !clientAddress ||
-      !GSTIN ||
-      !validTill ||
-      !paymentMethod
-    ) {
-      toast.error("Please fill all required fields.");
-      return;
-    }
-
-    if (GSTIN.length !== 15) {
-      toast.error("GSTIN must be exactly 15 characters long.");
-      return;
-    }
-
-    if(!serviceList.length){
-      toast.error("Add Services ");
-      return;
-    }
-   
-
-    const proposalFormData = {
-      clientName,
-      clientCompany,
-      clientAddress,
-      GSTIN,
-      discount,
-      validTill,
-      paymentMethod,
-      services: serviceList,
-    };
-
-    try {
-      const data = await createProposelService(proposalFormData);
-      console.log("API Response:", data);
-
-      if (data?.success) {
-        setFormData(initialPerposelFormData);
-        setServiceData(initialservicesFormData);
-        setServiceList([]);
-        toast.success("Proposal created successfully!");
-      }
-      // Optionally, you can reset the form here
-    } catch (error) {
-      console.error("CREATE PROPOSAL API ERROR:", error);
-      toast.error(error.message || "Failed to create proposal.");
-    }
-  }
-
   return (
-    <div className="w-full">
-      <h1 className="font-bold text-3xl text-center my-5">Create Perposal</h1>
-      <Form
+    <div>
+      <CommonForm
+        formControls={addInvoiceFormControl}
         formData={formData}
         setFormData={setFormData}
-        formControls={addProposalFormControl}
-        buttonText={"Add"}
-        onSubmit={handleSubmit}
+        buttonText={"Create Invoice"}
+        onSubmit={handleInvoiceSubmit}
       />
 
       <div className="mt-10 border-t pt-6">
@@ -130,14 +76,14 @@ const Proposal = () => {
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="serviceDesc">Duration of the Project</Label>
+            <Label htmlFor="serviceDesc">Add HSN No.</Label>
             <Input
               id="serviceDesc"
               required
-              placeholder="Enter the project durations"
-              value={serviceData.duration}
+              placeholder="Enter the HSN No."
+              value={serviceData?.HSN}
               onChange={(e) =>
-                setServiceData({ ...serviceData, duration: e.target.value })
+                setServiceData({ ...serviceData, HSN: e.target.value })
               }
             />
           </div>
@@ -160,7 +106,6 @@ const Proposal = () => {
           </Button>
         </form>
       </div>
-
       {/* Display Added Services List */}
       <div className="mt-10 border-t pt-6">
         <h2 className="text-xl font-semibold">Added Services</h2>
@@ -176,7 +121,7 @@ const Proposal = () => {
                     <h3 className="font-bold text-lg">{service.serviceName}</h3>
                     <div className="mt-3">
                       <h4 className="font-semibold text-sm">
-                        Duration: {service.duration}
+                        HSN NO: {service?.HSN}
                       </h4>
                     </div>
                     <p className="font-bold mt-3 text-md">
@@ -198,10 +143,8 @@ const Proposal = () => {
           <p className="mt-2 text-sm text-gray-500">No services added yet.</p>
         )}
       </div>
-
-    
     </div>
   );
 };
 
-export default Proposal;
+export default CreateInvoice;

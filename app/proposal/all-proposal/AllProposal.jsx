@@ -1,6 +1,15 @@
 "use client";
+import ProposalViewer from "@/components/sections/proposal/Proposal";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { getAllProposals } from "@/service";
-import Link from "next/link";
+import { Download, Eye, Pencil, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -56,21 +65,40 @@ const AllProposal = () => {
       ) : proposals.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {proposals.map((item) => (
-            <Link href={`/proposal/${item._id}`} key={item._id}>
-              <div className="block p-6 bg-white border border-gray-200 rounded-lg shadow-md hover:shadow-xl hover:bg-gray-50 transition-shadow duration-300 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                <h5 className="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-                  {item.clientName}
-                </h5>
-                <p className="mb-3 font-normal text-gray-600 dark:text-gray-400">
-                  {item.clientCompany}
-                </p>
-                <div className="text-sm text-gray-700 dark:text-gray-300 space-y-1">
-                  <p>Date: {formatDate(item.dateOfProposal)}</p>
-                  <p>GSTIN: {item.GSTIN}</p>
-                  <p className="font-semibold text-lg text-gray-800 dark:text-white mt-2">{formatCurrency(item.totalAmount)}</p>
+            <div key={item?._id}>
+              <div>
+                <div className="block p-6 bg-white border border-gray-200 rounded-lg shadow-md hover:shadow-xl hover:bg-gray-50 transition-shadow duration-300 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                  <h5 className="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+                    {item.clientName}
+                  </h5>
+                  <p className="mb-3 font-normal text-gray-600 dark:text-gray-400">
+                    {item.clientCompany}
+                  </p>
+                  <div className="text-sm text-gray-700 dark:text-gray-300 space-y-1">
+                    <p>Date: {formatDate(item.dateOfProposal)}</p>
+                    <p>GSTIN: {item.GSTIN}</p>
+                    <p className="font-semibold text-lg text-gray-800 dark:text-white mt-2">
+                      {formatCurrency(item.totalAmount)}
+                    </p>
+                  </div>
+                    <div className="mt-5 flex gap-4">
+                <div className="bg-gray-200 border-black h-10 w-10 flex items-center justify-center rounded-full">
+                  <Download />
+                </div>
+                <div className="bg-gray-200 border-black h-10 w-10 flex items-center justify-center rounded-full">
+                  <Pencil />
+                </div>
+                <div className="bg-gray-200 border-black h-10 w-10 flex items-center justify-center rounded-full">
+                  <Trash2 />
+                </div>
+                <div className="bg-gray-200 border-black h-10 w-10 flex items-center justify-center rounded-full">
+                  <Eye />
                 </div>
               </div>
-            </Link>
+                </div>
+              </div>
+            
+            </div>
           ))}
         </div>
       ) : (
