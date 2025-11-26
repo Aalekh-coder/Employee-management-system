@@ -9,26 +9,26 @@ const SideBar = ({ children }) => {
 
   const navLinks = [
     { href: "/", label: "Dashboard", icon: <LayoutDashboard size={100}/> },
+    { href: "/customer", label: "Customer", icon: <BookUser  size={100}/> },
     { href: "/invoice", label: "Invoice", icon: <FileText size={100}/> },
     { href: "/proposal", label: "Proposal", icon: <FileSignature size={100}/> },
-    { href: "/customer", label: "Customer", icon: <BookUser  size={100}/> },
   ];
 
   return (
     <div className="flex min-h-screen">
       <div
-        className={`bg-zinc-900 text-white p-4 flex flex-col transition-all duration-300 ease-in-out ${
+        className={`bg-white border-r text-black p-4 flex flex-col transition-all duration-300 ease-in-out ${
           open ? "w-60" : "w-20"
         }`}
       >
         <div className="flex items-center justify-center mb-6">
           {open && <h1 className="text-2xl font-bold grow">Promizone</h1>}
           <Button
-            variant="ghost"
+            // variant="ghost"
             onClick={() => setOpen(!open)}
-            className="hover:bg-gray-700"
+            className="hover:bg-black/60"
           >
-            <Menu />
+            <Menu size={30}/>
           </Button>
         </div>
         <nav className="flex flex-col gap-4">

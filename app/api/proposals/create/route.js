@@ -1,5 +1,6 @@
 import { connectDB } from "@/lib/db";
 import Proposal from "@/models/Proposal";
+import Customer from "@/models/Customer";
 
 export async function POST(req) {
   try {
@@ -9,14 +10,34 @@ export async function POST(req) {
     // 2️⃣ Read JSON data
     const data = await req.json();
 
-
     const proposal = await Proposal.create(data);
+
+    if (!proposal) {
+      return Response.json({
+        success: false,
+        message: "Error while creating the proposals",
+      });
+    }
+
+    // Find the customer by the clientId from the proposal
+    const findCustomer = await Customer.findById(proposal.clientId);
+
+    if (!findCustomer) {
+      return Response.json({
+        success: false,
+        message: "Customer with the provided clientId not found",
+      });
+    }
+
+    // Add the new proposal's ID to the customer's proposals array and save
+    findCustomer.proposals.push(proposal._id);
+    await findCustomer.save();
 
     return Response.json(
       {
         success: true,
         message: "Proposal created successfully",
-        data:proposal,
+        data: proposal,
       },
       { status: 201 }
     );

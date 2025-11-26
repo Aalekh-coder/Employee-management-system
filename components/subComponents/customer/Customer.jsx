@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 const Customer = ({ customerId }) => {
-  console.log(customerId);
   const [customerDetails, setCustomerDetails] = useState(null);
   const fetchCurrentCustomer = async () => {
     try {

@@ -1,4 +1,5 @@
 import Customer from "@/components/subComponents/customer/Customer";
+import CustomerProposal from "@/components/subComponents/customer/CustomerProposal";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const CustomerDashboard = ({ customerId }) => {
@@ -7,15 +8,15 @@ const CustomerDashboard = ({ customerId }) => {
       <Tabs defaultValue="Customer">
         <TabsList>
           <TabsTrigger value="Customer">Customer</TabsTrigger>
-          <TabsTrigger value="invoice">invoice</TabsTrigger>
           <TabsTrigger value="proposal">Proposal</TabsTrigger>
+          <TabsTrigger value="invoice">invoice</TabsTrigger>
           <TabsTrigger value="ledger">Ledger</TabsTrigger>
         </TabsList>
         <TabsContent value="Customer">
           <Customer customerId={customerId} />
         </TabsContent>
         <TabsContent value="invoice">All invoices</TabsContent>
-        <TabsContent value="proposal">All Proposal</TabsContent>
+        <TabsContent value="proposal"><CustomerProposal customerId={customerId}/></TabsContent>
         <TabsContent value="ledger">All ledger</TabsContent>
       </Tabs>
     </div>

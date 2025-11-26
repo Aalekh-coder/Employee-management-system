@@ -2,16 +2,15 @@ import mongoose from "mongoose";
 
 const ProposalSchema = new mongoose.Schema(
   {
+    clientId: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Customer",
+      required: true,
+    },
     clientName: { type: String, required: true },
     clientCompany: { type: String, required: true },
     clientAddress: { type: String, required: true },
     dateOfProposal: { type: Date, default: Date.now },
-    deliverables: [
-      {
-        title: { type: String, required: true },
-        items: [{ type: String, required: true }],
-      },
-    ],
     GSTIN: {
       type: String,
       required: true,

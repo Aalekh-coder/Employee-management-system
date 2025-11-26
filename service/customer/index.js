@@ -5,7 +5,7 @@ export async function getAllCustomerServices() {
   return data;
 }
 export async function createCustomerServices(formData) {
-  const { data } = await axiosInstance.post("/api/customer/create",formData);
+  const { data } = await axiosInstance.post("/api/customer/create", formData);
   return data;
 }
 
@@ -16,5 +16,17 @@ export async function deleteCustomerServices(id) {
 
 export async function getCustomerServices(id) {
   const { data } = await axiosInstance.get(`/api/customer/${id}`);
+  return data;
+}
+
+export async function editCustomerServices(id, formData) {
+  const { data } = await axiosInstance.put(`/api/customer/${id}`, formData);
+  return data;
+}
+
+// all proposal of customers
+
+export async function getAllProposalCustomer(id) {
+  const { data } = await axiosInstance.get(`/api/customer/propsals/${id}`);
   return data;
 }

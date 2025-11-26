@@ -10,7 +10,9 @@ import {
 } from "@/components/ui/sheet";
 import {
   deleteCustomerServices,
+  editCustomerServices,
   getAllCustomerServices,
+  getCustomerServices,
 } from "@/service/customer";
 import { Eye, FilePlusCorner, SquarePen, Trash } from "lucide-react";
 import Link from "next/link";
@@ -56,13 +58,11 @@ const AllCustomer = () => {
     }
   };
 
-  async function handleEditCustomer(id) {
-    console.log(id);
+  async function getCustomerDetailsById(id) {
     try {
       const response = await getCustomerServices(id);
-      console.log(response);
       if (response.success) {
-        toast.success("Customer details fetched");
+        // toast.success("Customer details fetched");
         setCustomerDetails(response.data);
       }
     } catch (error) {
@@ -81,7 +81,9 @@ const AllCustomer = () => {
 
       <Sheet
         open={customerSiderbar}
-        onOpenChange={() => setCustomerSiderbar(!customerSiderbar)}
+        onOpenChange={() => {
+          setCustomerSiderbar(!customerSiderbar);
+        }}
       >
         <div
           onClick={() => setCustomerSiderbar(!customerSiderbar)}
@@ -95,7 +97,7 @@ const AllCustomer = () => {
             <SheetDescription>dec</SheetDescription>
           </SheetHeader>
           <CreateCustomer
-          customerDetails={customerDetails}
+            customerDetails={customerDetails}
             setCustomerSiderbar={setCustomerSiderbar}
             setCustomerCreated={setCustomerCreated}
           />
@@ -103,7 +105,17 @@ const AllCustomer = () => {
       </Sheet>
 
       {loading ? (
-        <div>Loading..</div>
+        <div className="text-center mt-10 text-lg font-semibold text-gray-500">
+          Loading...
+        </div>
+      ) : customerList?.length === 0 ? (
+        <div className="mt-20 flex flex-col items-center justify-center text-center p-10 border-2 border-dashed rounded-lg text-gray-500">
+          <p className="text-xl font-semibold">No Customers Found</p>
+          <p className="mt-2">
+            Click on the plus icon in the bottom right to add your first
+            customer.
+          </p>
+        </div>
       ) : (
         <div className="mt-10">
           <div className="grid grid-cols-6 gap-3 bg-zinc-200 py-3 px-3 rounded font-semibold">
@@ -131,7 +143,7 @@ const AllCustomer = () => {
                   </Link>
                   <div
                     onClick={() => {
-                      handleEditCustomer(item?._id);
+                      getCustomerDetailsById(item?._id);
                       setCustomerSiderbar(!customerSiderbar);
                     }}
                   >
