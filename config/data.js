@@ -170,3 +170,33 @@ export const addCustomerFormControl = [
     type: "date",
   },
 ];
+
+export const ServiceFormControl = [
+  {
+    label: "Service Title",
+    name: "serviceTitle",
+    componentType: "input",
+    type: "text",
+    placeholder: "Enter Service Title",
+  },
+  {
+    label: "amount",
+    name: "amount",
+    componentType: "input",
+    type: "text",
+    placeholder: "Enter Service Title",
+  },
+  {
+    label: "Duration of the project",
+    name: "duration",
+    componentType: "select",
+    options: [
+      { id: "1 Month", label: "1 Month" },
+      { id: "3 Month", label: "3 Month" },
+      { id: "6 Month", label: "6 Month" },
+      { id: "9 Month", label: "9 Month" },
+      { id: "1 Year", label: "1 Year" },
+      { id: "2 Year", label: "2 Year" },
+    ],
+  },
+];

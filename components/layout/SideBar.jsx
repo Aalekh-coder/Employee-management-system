@@ -11,7 +11,6 @@ const SideBar = ({ children }) => {
     { href: "/", label: "Dashboard", icon: <LayoutDashboard size={100}/> },
     { href: "/customer", label: "Customer", icon: <BookUser  size={100}/> },
     { href: "/invoice", label: "Invoice", icon: <FileText size={100}/> },
-    { href: "/proposal", label: "Proposal", icon: <FileSignature size={100}/> },
   ];
 
   return (

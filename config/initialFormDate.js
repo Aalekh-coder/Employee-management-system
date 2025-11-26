@@ -46,3 +46,9 @@ export const initalCustomerFormData = {
   country: "",
   meetingDate: "",
 };
+
+export const initalServiceFormData = {
+  serviceTitle: "",
+  amount: "",
+  duration: "",
+};

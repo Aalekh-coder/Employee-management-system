@@ -24,9 +24,8 @@ const ProposalSchema = new mongoose.Schema(
 
     services: [
       {
-        serviceName: { type: String, required: true },
-        duration: String,
-        price: { type: Number, required: true, default: 0 },
+        type: mongoose.Schema.ObjectId,
+        ref: "Service",
       },
     ],
 

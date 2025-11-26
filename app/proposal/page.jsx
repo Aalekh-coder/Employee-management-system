@@ -1,6 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React from "react";
-import Proposal from "./create/Proposal";
+import Proposal from "./[create]/Proposal";
 import AllProposal from "./all-proposal/AllProposal";
 
 const page = () => {

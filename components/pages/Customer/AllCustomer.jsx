@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/sheet";
 import {
   deleteCustomerServices,
-  editCustomerServices,
   getAllCustomerServices,
   getCustomerServices,
 } from "@/service/customer";
@@ -87,7 +86,7 @@ const AllCustomer = () => {
       >
         <div
           onClick={() => setCustomerSiderbar(!customerSiderbar)}
-          className="fixed bottom-5 right-5 h-20 w-20 bg-blue-300 flex items-center justify-center rounded-full"
+          className="fixed bottom-10 right-10 h-20 w-20 bg-blue-300 flex items-center justify-center rounded-full"
         >
           <FilePlusCorner size={30} />
         </div>

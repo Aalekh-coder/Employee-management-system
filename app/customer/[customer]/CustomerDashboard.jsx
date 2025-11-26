@@ -1,5 +1,5 @@
+import CustomerProposal from "@/components/pages/Customer/CustomerProposal";
 import Customer from "@/components/subComponents/customer/Customer";
-import CustomerProposal from "@/components/subComponents/customer/CustomerProposal";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const CustomerDashboard = ({ customerId }) => {
