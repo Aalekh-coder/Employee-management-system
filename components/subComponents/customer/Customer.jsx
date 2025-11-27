@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 
 const Customer = ({ customerId }) => {
   const [customerDetails, setCustomerDetails] = useState(null);
+
   const fetchCurrentCustomer = async () => {
     try {
       const response = await getCustomerServices(customerId);
@@ -39,16 +40,24 @@ const Customer = ({ customerId }) => {
     pincode,
     country,
     meetingDate,
+    tanNo,
+    email,
   } = customerDetails;
 
   return (
     <div className="border p-4 flex flex-col w-[30vw] rounded-lg">
       <h2 className="text-xl font-semibold mb-2">{name}</h2>
-      <p  className="my-2">
+      <p className="my-2">
         <strong>Company:</strong> {company}
       </p>
       <p className="my-2">
         <strong>GSTIN:</strong> {GSTIN}
+      </p>
+      <p className="my-2">
+        <strong>TAN No:</strong> {tanNo || "NA"}
+      </p>
+      <p className="my-2">
+        <strong>Email:</strong> {email}
       </p>
       <p className="my-2">
         <strong>Phone:</strong> {phone}

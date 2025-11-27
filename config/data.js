@@ -1,31 +1,12 @@
+
+
+
 export const addProposalFormControl = [
   {
-    label: "Client Name",
-    name: "clientName",
+    label: "Date Of Proposal",
+    name: "dateOfProposal",
     componentType: "input",
-    type: "text",
-    placeholder: "Enter product clientName",
-  },
-  {
-    label: "Client Company",
-    name: "clientCompany",
-    componentType: "input",
-    type: "text",
-    placeholder: "Enter product clientCompany",
-  },
-  {
-    label: "Client Address",
-    name: "clientAddress",
-    componentType: "input",
-    type: "text",
-    placeholder: "Enter product clientAddress",
-  },
-  {
-    label: "GSTIN",
-    name: "GSTIN",
-    componentType: "input",
-    type: "text",
-    placeholder: "Enter product GSTIN",
+    type: "date",
   },
   {
     label: "Discount",
@@ -33,6 +14,13 @@ export const addProposalFormControl = [
     componentType: "input",
     type: "number",
     placeholder: "Enter Discount",
+  },
+  {
+    label: "Discount Percentage",
+    name: "discountPercentage",
+    componentType: "input",
+    type: "number",
+    placeholder: "Enter Discount Percentage",
   },
   {
     label: "Valid Till",
@@ -47,11 +35,11 @@ export const addProposalFormControl = [
     options: [
       { id: "upi", label: "UPI" },
       { id: "card", label: "Card" },
-      { id: "cash", label: "Cash" },
       { id: "bank", label: "Bank" },
     ],
   },
 ];
+
 export const addInvoiceFormControl = [
   {
     label: "Client Name",
@@ -113,6 +101,20 @@ export const addCustomerFormControl = [
     componentType: "input",
     type: "text",
     placeholder: "Enter GST No",
+  },
+  {
+    label: "TAN No.",
+    name: "tanNo",
+    componentType: "input",
+    type: "text",
+    placeholder: "Enter Tax Deduction and Collection Account Number",
+  },
+  {
+    label: "Email",
+    name: "email",
+    componentType: "input",
+    type: "text",
+    placeholder: "Enter Email",
   },
   {
     label: "Phone no.",

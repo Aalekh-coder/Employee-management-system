@@ -1,10 +1,7 @@
 export const initialPerposelFormData = {
-  clientName: "",
-  clientCompany: "",
-  clientAddress: "",
   dateOfProposal: "",
-  GSTIN: "",
   discount: "",
+  discountPercentage: "",
   validTill: "",
   paymentMethod: "",
 };
@@ -37,6 +34,8 @@ export const initalCustomerFormData = {
   name: "",
   company: "",
   GSTIN: "",
+  tanNo: "",
+  email: "",
   phone: "",
   website: "",
   Address: "",

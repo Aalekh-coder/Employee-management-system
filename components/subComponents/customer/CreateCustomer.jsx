@@ -18,17 +18,23 @@ const CreateCustomer = ({
   const [formData, setFormData] = useState(
     customerDetails || initalCustomerFormData
   );
-  const { name, company, GSTIN, phone, Address } = formData;
+
 
   const handleCustomer = async (e) => {
     e.preventDefault();
 
-    if (!name || !company || !GSTIN || !phone || !Address) {
-      toast.error(
-        "Name Company Gstin Phone Address is required to create customer"
-      );
-      return;
+    for (const control of addCustomerFormControl) {
+      if (
+        control.name !== "tanNo" &&
+        control.name !== "website" &&
+        control.name !== "meetingDate" &&
+        !formData[control.name]
+      ) {
+        toast.error(`Please fill in the ${control.label} field.`);
+        return;
+      }
     }
+
     try {
       const createdCustomer = await createCustomerServices(formData);
       if (createdCustomer.success) {
@@ -37,6 +43,7 @@ const CreateCustomer = ({
         setCustomerSiderbar(false);
         setCustomerCreated("done");
       }
+      console.log(formData);
     } catch (error) {
       console.log(error);
       toast.error(error.message);

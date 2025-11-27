@@ -4,6 +4,8 @@ const CustomerSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     company: { type: String, required: true },
+    tanNo: { type: String, minlength: 10, maxlength: 10 },
+    email: { type: String, required: true },
     GSTIN: {
       type: String,
       required: true,

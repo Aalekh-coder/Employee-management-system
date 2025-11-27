@@ -1,36 +1,65 @@
 "use client";
 import CommonForm from "@/components/layout/Form";
-import Form from "@/components/layout/Form";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { addProposalFormControl, ServiceFormControl } from "@/config/data";
+import { ServiceFormControl, addProposalFormControl } from "@/config/data";
 import {
   initalServiceFormData,
   initialPerposelFormData,
-  initialservicesFormData,
 } from "@/config/initialFormDate";
-import { createProposelService } from "@/service";
 import { getCustomerServices } from "@/service/customer";
-import { createServicesService } from "@/service/service";
+import { createProposelService } from "@/service/proposal";
+import { createServicesService, getAllService } from "@/service/service";
 
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 const Proposal = ({ customerId }) => {
   const [formData, setFormData] = useState(initialPerposelFormData);
+  const [servicesItem, setServicesItem] = useState([]);
+  const [selectedServices, setSelectedServices] = useState([]);
   const [clientDetails, setClientDetails] = useState({});
-  const { Address, GSTIN, city, company, country, name, phone } = clientDetails;
+
+  const { Address, GSTIN, city, company, country, name, phone, tanNo, email } =
+    clientDetails;
 
   // services
   const [serviceFormData, setServiceFormData] = useState(initalServiceFormData);
 
+  const propsalAllItemForm = {
+    clientId: customerId,
+    clientName: name,
+    clientCompany: company,
+    clientAddress: `${Address} -${city} -${country}`,
+    GSTIN,
+    tanNo: tanNo || "Na",
+    services: selectedServices.map(({ _id }) => _id),
+    discount: formData?.discount || "Na",
+    discountPercentage: formData?.discountPercentage || "Na",
+    validTill: formData?.validTill,
+    paymentMethod: formData?.paymentMethod,
+  };
+
+
+
+  async function fetchAllServices() {
+    try {
+      const response = await getAllService();
+      if (response.success) {
+        setServicesItem(response.data);
+        toast.success("All Services Fetched");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+    }
+  }
+
   async function handleService(e) {
-    e.preventDefault()
+    e.preventDefault();
     try {
       const response = await createServicesService(serviceFormData);
       if (response.success) {
         toast.success(response.message);
+        setServiceFormData(initalServiceFormData);
       }
     } catch (error) {
       console.log(error);
@@ -38,7 +67,27 @@ const Proposal = ({ customerId }) => {
     }
   }
 
+  async function handleProposalSubmit(e) {
+    e.preventDefault();
 
+    if (formData?.discount > 0 && formData?.discountPercentage > 0) {
+      toast.error(
+        "Please use either a fixed discount or a percentage, not both."
+      );
+      return;
+    }
+    try {
+      const response = await createProposelService(propsalAllItemForm);
+      if (response.success) {
+        toast.success("Propsal create successfull");
+        setFormData(initialPerposelFormData);
+        setSelectedServices([]);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+    }
+  }
   async function customerDetails() {
     try {
       const response = await getCustomerServices(customerId);
@@ -54,17 +103,64 @@ const Proposal = ({ customerId }) => {
 
   useEffect(() => {
     customerDetails();
+    fetchAllServices();
   }, []);
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-  }
+  const handleSelectService = (service) => {
+    setSelectedServices((prevSelected) => {
+      const isSelected = prevSelected.some((s) => s._id === service._id);
+      if (isSelected) {
+        return prevSelected.filter((s) => s._id !== service._id);
+      } else {
+        return [...prevSelected, service];
+      }
+    });
+  };
+
+  useEffect(() => {
+    const serviceIds = selectedServices.map((s) => s._id);
+    setFormData((prev) => ({ ...prev, services: serviceIds }));
+  }, [selectedServices]);
 
   return (
     <div className="w-full">
       <h1 className="font-bold text-3xl text-center my-5">Create Perposal</h1>
-      <div className="grid grid-cols-2 gap-5 px-10 mt-5">
-        <div>div1</div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 px-10 mt-5">
+        <div>
+          <CommonForm
+            formControls={addProposalFormControl}
+            formData={formData}
+            setFormData={setFormData}
+            onSubmit={handleProposalSubmit}
+            buttonText={"Create Proposal"}
+          />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 py-3 ">
+            {servicesItem.map((item) => (
+              <button
+                key={item?._id}
+                onClick={() => handleSelectService(item)}
+                className={`group block rounded-lg p-4 border shadow-sm transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
+                  selectedServices.some((s) => s?._id === item?._id)
+                    ? "bg-blue-100 border-blue-400"
+                    : "bg-white border-gray-200 hover:shadow-md hover:border-gray-300"
+                }`}
+              >
+                <div className="text-center">
+                  <p className="font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">
+                    {item?.serviceTitle}
+                  </p>
+                </div>
+                <div className="mt-2 flex justify-between items-center text-sm text-gray-500">
+                  <span>{item?.duration}</span>
+                  <span className="font-bold text-gray-700">
+                    ₹ {item?.amount?.toLocaleString("en-IN")}
+                  </span>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
 
         <div className="flex flex-col gap-5">
           <div className="border flex flex-col p-6 rounded-lg shadow-md bg-gray-50">
@@ -80,6 +176,12 @@ const Proposal = ({ customerId }) => {
               </p>
               <p>
                 <strong>Phone:</strong> {phone}
+              </p>
+              <p>
+                <strong>TAN NO:</strong> {tanNo || "NA"}
+              </p>
+              <p>
+                <strong>Email:</strong> {email}
               </p>
               <p>
                 <strong>Address:</strong> {Address}, {city}, {country}

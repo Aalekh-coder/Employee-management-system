@@ -21,6 +21,9 @@ const ProposalSchema = new mongoose.Schema(
         message: "Invalid GSTIN format",
       },
     },
+    tanNo: {
+      type: String,
+    },
 
     services: [
       {
@@ -30,6 +33,7 @@ const ProposalSchema = new mongoose.Schema(
     ],
 
     discount: { type: Number, default: 0 },
+    discountPercentage: { type: Number, default: 0 },
     totalAmount: { type: Number },
     validTill: Date,
     paymentMethod: String,
@@ -38,17 +42,35 @@ const ProposalSchema = new mongoose.Schema(
 );
 
 // Pre-save hook to calculate the totalAmount
-ProposalSchema.pre("save", function (next) {
-  // 'this' refers to the document being saved
-  if (this.isModified("services") || this.isModified("discount")) {
-    const subtotal = this.services.reduce(
-      (acc, service) => acc + (service.price || 0),
-      0
-    );
-    const discountAmount = this.discount || 0;
-    const amountAfterDiscount = subtotal - discountAmount;
-    const gstAmount = amountAfterDiscount * 0.18;
-    this.totalAmount = amountAfterDiscount + gstAmount;
+ProposalSchema.pre("save", async function (next) {
+  if (
+    this.isModified("services") ||
+    this.isModified("discount") ||
+    this.isModified("discountPercentage") ||
+    this.isModified("tanNo")
+  ) {
+    try {
+      await this.populate("services");
+
+      const subtotal = this.services.reduce(
+        (acc, service) => acc + (service.price || 0),
+        0
+      );
+
+      let discountAmount = 0;
+      if (this.discountPercentage > 0) {
+        discountAmount = subtotal * (this.discountPercentage / 100);
+      } else {
+        discountAmount = this.discount || 0;
+      }
+
+      let amountAfterDiscount = subtotal - discountAmount;
+      let tanCharge = this.tanNo ? amountAfterDiscount * 0.02 : 0;
+      let gstAmount = (amountAfterDiscount + tanCharge) * 0.18;
+      this.totalAmount = amountAfterDiscount + tanCharge + gstAmount;
+    } catch (error) {
+      return next(error);
+    }
   }
   next();
 });
