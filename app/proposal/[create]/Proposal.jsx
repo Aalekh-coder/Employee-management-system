@@ -18,11 +18,41 @@ const Proposal = ({ customerId }) => {
   const [selectedServices, setSelectedServices] = useState([]);
   const [clientDetails, setClientDetails] = useState({});
 
+  const [serviceCreateSucess, setServiceCreateSucess] = useState("");
+
   const { Address, GSTIN, city, company, country, name, phone, tanNo, email } =
     clientDetails;
 
   // services
   const [serviceFormData, setServiceFormData] = useState(initalServiceFormData);
+
+  function calculationOfTotalAmount() {
+    const totalServicePrice = selectedServices.reduce(
+      (total, service) => total + service.amount,
+      0
+    );
+
+    let priceAfterDiscount = totalServicePrice;
+
+    if (formData?.discountPercentage > 0) {
+      const discountValue =
+        (totalServicePrice * Number(formData.discountPercentage)) / 100;
+      priceAfterDiscount = totalServicePrice - discountValue;
+    } else if (formData?.discount > 0) {
+      priceAfterDiscount = totalServicePrice - Number(formData.discount);
+    }
+
+    // Apply additional 2% reduction if tanNo exists
+    if (tanNo) {
+      priceAfterDiscount = priceAfterDiscount * 0.98; // Reduce by 2%
+    }
+
+    // Add 18% GST
+    const finalAmountWithGST = priceAfterDiscount * 1.18;
+
+    return finalAmountWithGST;
+  }
+
 
   const propsalAllItemForm = {
     clientId: customerId,
@@ -30,15 +60,14 @@ const Proposal = ({ customerId }) => {
     clientCompany: company,
     clientAddress: `${Address} -${city} -${country}`,
     GSTIN,
-    tanNo: tanNo || "Na",
+    tanNo: tanNo,
     services: selectedServices.map(({ _id }) => _id),
-    discount: formData?.discount || "Na",
-    discountPercentage: formData?.discountPercentage || "Na",
+    discount: formData?.discount || 0,
+    discountPercentage: formData?.discountPercentage || 0,
     validTill: formData?.validTill,
     paymentMethod: formData?.paymentMethod,
+    totalAmount: calculationOfTotalAmount(),
   };
-
-
 
   async function fetchAllServices() {
     try {
@@ -55,11 +84,20 @@ const Proposal = ({ customerId }) => {
 
   async function handleService(e) {
     e.preventDefault();
+
     try {
+      if (
+        !serviceFormData.serviceTitle ||
+        !serviceFormData.amount ||
+        !serviceFormData.duration
+      ) {
+        toast.error("please fill the service details");
+      }
       const response = await createServicesService(serviceFormData);
       if (response.success) {
         toast.success(response.message);
         setServiceFormData(initalServiceFormData);
+        setServiceCreateSucess("done");
       }
     } catch (error) {
       console.log(error);
@@ -70,16 +108,29 @@ const Proposal = ({ customerId }) => {
   async function handleProposalSubmit(e) {
     e.preventDefault();
 
-    if (formData?.discount > 0 && formData?.discountPercentage > 0) {
-      toast.error(
-        "Please use either a fixed discount or a percentage, not both."
-      );
-      return;
-    }
     try {
+      if (formData?.discount > 0 && formData?.discountPercentage > 0) {
+        toast.error(
+          "Please use either a fixed discount or a percentage, not both."
+        );
+        return;
+      }
+
+      if (!formData.paymentMethod || !formData.validTill) {
+        toast.error(
+          "Payment method and 'Valid Till' date are required to create the proposal."
+        );
+        return;
+      }
+
+      if (propsalAllItemForm.services.length === 0) {
+        toast.error("Please add at least one service to the proposal.");
+        return;
+      }
+
       const response = await createProposelService(propsalAllItemForm);
       if (response.success) {
-        toast.success("Propsal create successfull");
+        toast.success("Proposal created successfully!");
         setFormData(initialPerposelFormData);
         setSelectedServices([]);
       }
@@ -103,8 +154,11 @@ const Proposal = ({ customerId }) => {
 
   useEffect(() => {
     customerDetails();
-    fetchAllServices();
   }, []);
+
+  useEffect(() => {
+    fetchAllServices();
+  }, [serviceCreateSucess]);
 
   const handleSelectService = (service) => {
     setSelectedServices((prevSelected) => {

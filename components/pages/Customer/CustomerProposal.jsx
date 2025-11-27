@@ -1,15 +1,17 @@
 "use client";
 
-import CreateProposal from "@/components/subComponents/customer/CreateProposal";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
 import { getAllProposalCustomer } from "@/service/customer";
-import { Album } from "lucide-react";
+import { deleteProposalService } from "@/service/proposal";
+import {
+  Album,
+  Download,
+  Eye,
+  FileDown,
+  Pencil,
+  SquarePen,
+  Trash,
+  Trash2,
+} from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -29,6 +31,25 @@ const CustomerProposal = ({ customerId }) => {
       console.log(error);
       toast.error(error.message || "Failed to fetch proposals");
     }
+  }
+
+  async function handleDeleteProposal(id) {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this proposal?"
+    );
+    if (confirmed) {
+      try {
+        const response = await deleteProposalService(id);
+        if (response.success) {
+          toast.success(response.message);
+          getAllCustomerPropsals();
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error(error.message);
+      }
+    }
+    
   }
 
   useEffect(() => {
@@ -65,8 +86,26 @@ const CustomerProposal = ({ customerId }) => {
                 </p>
               </div>
               <p className="text-xl font-semibold mt-4 text-right text-blue-600">
-                ₹{item?.totalAmount.toLocaleString("en-IN")}
+                ₹{item?.totalAmount?.toLocaleString("en-IN") || "Na"}
               </p>
+
+              <div className="mt-5 flex gap-4">
+                <div className="bg-gray-200 border-black h-10 w-10 flex items-center justify-center rounded-full">
+                  <Download />
+                </div>
+                <div className="bg-gray-200 border-black h-10 w-10 flex items-center justify-center rounded-full">
+                  <Pencil />
+                </div>
+                <div
+                  onClick={() => handleDeleteProposal(item?._id)}
+                  className="bg-gray-200 border-black h-10 w-10 flex items-center justify-center rounded-full"
+                >
+                  <Trash2 />
+                </div>
+                <div className="bg-gray-200 border-black h-10 w-10 flex items-center justify-center rounded-full">
+                  <Eye />
+                </div>
+              </div>
             </div>
           ))}
         </div>
@@ -76,7 +115,10 @@ const CustomerProposal = ({ customerId }) => {
         </div>
       )}
 
-      <Link href={`/proposal/${customerId}`} className="fixed bottom-10 right-10 h-20 w-20 bg-blue-300 flex items-center justify-center rounded-full">
+      <Link
+        href={`/proposal/${customerId}`}
+        className="fixed bottom-10 right-10 h-20 w-20 bg-blue-300 flex items-center justify-center rounded-full"
+      >
         <Album size={30} />
       </Link>
     </div>

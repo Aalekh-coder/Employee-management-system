@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Menu, LayoutDashboard, FileText, FileSignature, BookUser } from "lucide-react";
+import { Menu, LayoutDashboard, FileText, BookUser, BookText } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -10,7 +10,7 @@ const SideBar = ({ children }) => {
   const navLinks = [
     { href: "/", label: "Dashboard", icon: <LayoutDashboard size={100}/> },
     { href: "/customer", label: "Customer", icon: <BookUser  size={100}/> },
-    { href: "/proposal/all-proposal", label: "Propsals", icon: <FileText size={100}/> },
+    { href: "/proposal/all-proposal", label: "Propsals", icon: <BookText /> },
     { href: "/invoice", label: "Invoice", icon: <FileText size={100}/> },
   ];
 

@@ -37,7 +37,7 @@ export async function DELETE(req, context) {
   try {
     await connectDB();
 
-    const { id } = context.params;
+    const { id } = await context.params;
 
     const deleteProposal = await Proposal.findByIdAndDelete(id);
 

@@ -9,6 +9,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { getAllProposals } from "@/service";
+import { deleteProposalService } from "@/service/proposal";
 import { Download, Eye, Pencil, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -32,9 +33,32 @@ const formatCurrency = (amount) => {
   }).format(amount);
 };
 
+
+
 const AllProposal = () => {
   const [loading, setLoading] = useState(true); // Start with loading true
   const [proposals, setProposals] = useState([]);
+
+
+  
+  async function handleDeleteProposal(id) {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this proposal?"
+    );
+    if (confirmed) {
+      try {
+        const response = await deleteProposalService(id);
+        if (response.success) {
+          toast.success(response.message);
+          fetchAllProposals();
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error(error.message);
+      }
+    }
+    
+  }
 
   const fetchAllProposals = async () => {
     try {
@@ -88,7 +112,7 @@ const AllProposal = () => {
                 <div className="bg-gray-200 border-black h-10 w-10 flex items-center justify-center rounded-full">
                   <Pencil />
                 </div>
-                <div className="bg-gray-200 border-black h-10 w-10 flex items-center justify-center rounded-full">
+                <div onClick={()=>handleDeleteProposal(item?._id)} className="bg-gray-200 border-black h-10 w-10 flex items-center justify-center rounded-full">
                   <Trash2 />
                 </div>
                 <div className="bg-gray-200 border-black h-10 w-10 flex items-center justify-center rounded-full">
