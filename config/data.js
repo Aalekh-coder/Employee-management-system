@@ -1,6 +1,3 @@
-
-
-
 export const addProposalFormControl = [
   {
     label: "Date Of Proposal",
@@ -199,6 +196,76 @@ export const ServiceFormControl = [
       { id: "9 Month", label: "9 Month" },
       { id: "1 Year", label: "1 Year" },
       { id: "2 Year", label: "2 Year" },
+    ],
+  },
+];
+
+export const editFormControls = [
+  {
+    label: "Client Name",
+    name: "clientName",
+    componentType: "input",
+    type: "text",
+  },
+  {
+    label: "Client Company",
+    name: "clientCompany",
+    componentType: "input",
+    type: "text",
+  },
+  {
+    label: "Client Address",
+    name: "clientAddress",
+    componentType: "textarea",
+    type: "text",
+  },
+  {
+    label: "Date Of Proposals",
+    name: "dateOfProposal",
+    componentType: "input",
+    type: "date",
+  },
+  {
+    label: "GSTIN",
+    name: "GSTIN",
+    componentType: "input",
+    type: "text",
+  },
+  {
+    label: "Tan No",
+    name: "tanNo",
+    componentType: "input",
+    type: "text",
+    placeholder:"Enter Tan no PDES03028F"
+  },
+  {
+    label: "Discount",
+    name: "discount",
+    componentType: "input",
+    type: "number",
+    placeholder: "Enter only one discount Amount fields",
+  },
+  {
+    label: "Discount Percentage",
+    name: "discountPercentage",
+    componentType: "input",
+    placeholder: "Enter only one discount Percentage discount Amount fields",
+    type: "number",
+  },
+  {
+    label: "Valid Till",
+    name: "validTill",
+    componentType: "input",
+    type: "date",
+  },
+  {
+    label: "Payment Method",
+    name: "paymentMethod",
+    componentType: "select",
+    options: [
+      { id: "upi", label: "UPI" },
+      { id: "card", label: "Card" },
+      { id: "bank", label: "Bank" },
     ],
   },
 ];

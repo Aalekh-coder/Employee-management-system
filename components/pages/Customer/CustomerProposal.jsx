@@ -2,21 +2,15 @@
 
 import { getAllProposalCustomer } from "@/service/customer";
 import { deleteProposalService } from "@/service/proposal";
-import {
-  Album,
-  Download,
-  Eye,
-  FileDown,
-  Pencil,
-  SquarePen,
-  Trash,
-  Trash2,
-} from "lucide-react";
+import { Album, Download, Eye, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 const CustomerProposal = ({ customerId }) => {
+
+  console.log(customerId,"customerId");
+
   const [listPropoasls, setListPropoasls] = useState([]);
 
   async function getAllCustomerPropsals() {
@@ -49,7 +43,6 @@ const CustomerProposal = ({ customerId }) => {
         toast.error(error.message);
       }
     }
-    
   }
 
   useEffect(() => {
@@ -93,18 +86,19 @@ const CustomerProposal = ({ customerId }) => {
                 <div className="bg-gray-200 border-black h-10 w-10 flex items-center justify-center rounded-full">
                   <Download />
                 </div>
-                <div className="bg-gray-200 border-black h-10 w-10 flex items-center justify-center rounded-full">
+                <Link
+                  href={`/proposal/edit-proposal/${item?._id}`}
+                  className="bg-gray-200 border-black h-10 w-10 flex items-center justify-center rounded-full"
+                >
                   <Pencil />
-                </div>
+                </Link>
                 <div
                   onClick={() => handleDeleteProposal(item?._id)}
                   className="bg-gray-200 border-black h-10 w-10 flex items-center justify-center rounded-full"
                 >
                   <Trash2 />
                 </div>
-                <div className="bg-gray-200 border-black h-10 w-10 flex items-center justify-center rounded-full">
-                  <Eye />
-                </div>
+              
               </div>
             </div>
           ))}

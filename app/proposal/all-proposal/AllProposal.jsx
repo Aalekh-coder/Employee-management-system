@@ -11,6 +11,7 @@ import {
 import { getAllProposals } from "@/service";
 import { deleteProposalService } from "@/service/proposal";
 import { Download, Eye, Pencil, Trash2 } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -33,14 +34,10 @@ const formatCurrency = (amount) => {
   }).format(amount);
 };
 
-
-
 const AllProposal = () => {
   const [loading, setLoading] = useState(true); // Start with loading true
   const [proposals, setProposals] = useState([]);
 
-
-  
   async function handleDeleteProposal(id) {
     const confirmed = window.confirm(
       "Are you sure you want to delete this proposal?"
@@ -57,7 +54,6 @@ const AllProposal = () => {
         toast.error(error.message);
       }
     }
-    
   }
 
   const fetchAllProposals = async () => {
@@ -105,23 +101,26 @@ const AllProposal = () => {
                       {formatCurrency(item.totalAmount)}
                     </p>
                   </div>
-                    <div className="mt-5 flex gap-4">
-                <div className="bg-gray-200 border-black h-10 w-10 flex items-center justify-center rounded-full">
-                  <Download />
-                </div>
-                <div className="bg-gray-200 border-black h-10 w-10 flex items-center justify-center rounded-full">
-                  <Pencil />
-                </div>
-                <div onClick={()=>handleDeleteProposal(item?._id)} className="bg-gray-200 border-black h-10 w-10 flex items-center justify-center rounded-full">
-                  <Trash2 />
-                </div>
-                <div className="bg-gray-200 border-black h-10 w-10 flex items-center justify-center rounded-full">
-                  <Eye />
+                  <div className="mt-5 flex gap-4">
+                    <div className="bg-gray-200 border-black h-10 w-10 flex items-center justify-center rounded-full">
+                      <Download />
+                    </div>
+                    <Link
+                      href={`/proposal/edit-proposal/${item?._id}`}
+                      className="bg-gray-200 border-black h-10 w-10 flex items-center justify-center rounded-full"
+                    >
+                      <Pencil />
+                    </Link>
+                    <div
+                      onClick={() => handleDeleteProposal(item?._id)}
+                      className="bg-gray-200 border-black h-10 w-10 flex items-center justify-center rounded-full"
+                    >
+                      <Trash2 />
+                    </div>
+                    
+                  </div>
                 </div>
               </div>
-                </div>
-              </div>
-            
             </div>
           ))}
         </div>

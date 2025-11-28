@@ -6,7 +6,9 @@ import {
   initialPerposelFormData,
 } from "@/config/initialFormDate";
 import { getCustomerServices } from "@/service/customer";
-import { createProposelService } from "@/service/proposal";
+import {
+  createProposelService,
+} from "@/service/proposal";
 import { createServicesService, getAllService } from "@/service/service";
 
 import React, { useEffect, useState } from "react";
@@ -18,13 +20,14 @@ const Proposal = ({ customerId }) => {
   const [selectedServices, setSelectedServices] = useState([]);
   const [clientDetails, setClientDetails] = useState({});
 
-  const [serviceCreateSucess, setServiceCreateSucess] = useState("");
-
   const { Address, GSTIN, city, company, country, name, phone, tanNo, email } =
     clientDetails;
 
-  // services
+
   const [serviceFormData, setServiceFormData] = useState(initalServiceFormData);
+
+
+
 
   function calculationOfTotalAmount() {
     const totalServicePrice = selectedServices.reduce(
@@ -52,7 +55,6 @@ const Proposal = ({ customerId }) => {
 
     return finalAmountWithGST;
   }
-
 
   const propsalAllItemForm = {
     clientId: customerId,
@@ -97,7 +99,7 @@ const Proposal = ({ customerId }) => {
       if (response.success) {
         toast.success(response.message);
         setServiceFormData(initalServiceFormData);
-        setServiceCreateSucess("done");
+        fetchAllServices();
       }
     } catch (error) {
       console.log(error);
@@ -154,11 +156,10 @@ const Proposal = ({ customerId }) => {
 
   useEffect(() => {
     customerDetails();
+    fetchAllServices()
   }, []);
 
-  useEffect(() => {
-    fetchAllServices();
-  }, [serviceCreateSucess]);
+
 
   const handleSelectService = (service) => {
     setSelectedServices((prevSelected) => {

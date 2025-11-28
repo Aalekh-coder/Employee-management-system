@@ -95,7 +95,7 @@ export async function PUT(req, context) {
       pincode,
       country,
       meetingDate,
-    } = await req.json(); // 'await' added here
+    } = await req.json(); 
 
     let findCustomer = await Customer.findById(id);
     if (!findCustomer) {
