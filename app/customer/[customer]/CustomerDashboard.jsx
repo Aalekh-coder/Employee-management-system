@@ -1,4 +1,5 @@
 import CustomerProposal from "@/components/pages/Customer/CustomerProposal";
+import AllInvoice from "@/components/pages/Invoice/AllInvoice";
 import Customer from "@/components/subComponents/customer/Customer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -15,7 +16,7 @@ const CustomerDashboard = ({ customerId }) => {
         <TabsContent value="Customer">
           <Customer customerId={customerId} />
         </TabsContent>
-        <TabsContent value="invoice">All invoices</TabsContent>
+        <TabsContent value="invoice"><AllInvoice customerId={customerId}/></TabsContent>
         <TabsContent value="proposal"><CustomerProposal customerId={customerId}/></TabsContent>
         <TabsContent value="ledger">All ledger</TabsContent>
       </Tabs>

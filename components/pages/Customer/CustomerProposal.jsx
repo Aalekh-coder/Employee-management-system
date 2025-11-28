@@ -9,8 +9,6 @@ import toast from "react-hot-toast";
 
 const CustomerProposal = ({ customerId }) => {
 
-  console.log(customerId,"customerId");
-
   const [listPropoasls, setListPropoasls] = useState([]);
 
   async function getAllCustomerPropsals() {

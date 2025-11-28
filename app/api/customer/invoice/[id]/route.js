@@ -1,18 +1,16 @@
 import { connectDB } from "@/lib/db";
 import Customer from "@/models/Customer";
 
-
 export async function GET(req, context) {
   try {
     await connectDB();
 
     const { id } = await context.params;
 
-    // Find the customer by ID and populate the 'proposals' field
     const customer = await Customer.findById(id).populate({
-      path: "proposals",
+      path: "invoices",
       select:
-        "clientName clientCompany clientAddress dateOfProposal GSTIN totalAmount",
+        "clientName clientCompany clientAddress GSTIN services taxType invoiceDate invoiceNo totalAmount",
     });
 
     if (!customer) {
@@ -27,20 +25,17 @@ export async function GET(req, context) {
       );
     }
 
-    return Response.json(
-      {
-        success: true,
-        message: "Customer proposals fetched successfully",
-        data: customer.proposals,
-      },
-      { status: 200 }
-    );
+    return Response.json({
+      success: true,
+      message: "Customer Invoice fetched successfully",
+      data: customer?.invoices,
+    });
   } catch (error) {
     console.log(error);
     return Response.json(
       {
         success: false,
-        message: "server error",
+        message: "server error while finding the invoice of customer",
         error: error.message,
       },
       {

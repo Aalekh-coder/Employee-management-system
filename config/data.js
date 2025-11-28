@@ -236,7 +236,7 @@ export const editFormControls = [
     name: "tanNo",
     componentType: "input",
     type: "text",
-    placeholder:"Enter Tan no PDES03028F"
+    placeholder: "Enter Tan no PDES03028F",
   },
   {
     label: "Discount",
@@ -267,5 +267,47 @@ export const editFormControls = [
       { id: "card", label: "Card" },
       { id: "bank", label: "Bank" },
     ],
+  },
+];
+
+export const createInviceFormControls = [
+  {
+    label: "Tax Type",
+    name: "taxType",
+    componentType: "select",
+    options: [
+      { id: "IGST", label: "IGST" },
+      { id: "SGST/CGST", label: "SGST/CGST" },
+    ],
+  },
+  {
+    label: "Date Of Invoice",
+    name: "invoiceDate",
+    componentType: "input",
+    type: "date",
+  },
+];
+
+export const createServiceForInvoice = [
+  {
+    label: "Service Name",
+    name: "serviceName",
+    componentType: "input",
+    type: "text",
+    placeholder: "Enter product Service Name",
+  },
+  {
+    label: "HSN code",
+    name: "HSN",
+    componentType: "input",
+    type: "text",
+    placeholder: "Enter HSN no",
+  },
+  {
+    label: "Price",
+    name: "price",
+    componentType: "input",
+    type: "number",
+    placeholder: "Enter Service price",
   },
 ];

@@ -2,6 +2,11 @@ import mongoose from "mongoose";
 
 const InvoiceSchema = new mongoose.Schema(
   {
+    clientId: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Customer",
+      required: true,
+    },
     clientName: { type: String, required: true },
     clientCompany: { type: String, required: true },
     clientAddress: { type: String, required: true },
@@ -15,12 +20,11 @@ const InvoiceSchema = new mongoose.Schema(
         message: "Invalid GSTIN format",
       },
     },
+    tanNo: {
+      type: String,
+    },
     services: [
-      {
-        serviceName: { type: String, required: true },
-        HSN: { type: String, required: true },
-        price: { type: Number, required: true },
-      },
+      { type: mongoose.Schema.ObjectId, ref: "InvoiceService", required: true },
     ],
     taxType: {
       type: String,
@@ -43,16 +47,6 @@ const InvoiceSchema = new mongoose.Schema(
 );
 
 InvoiceSchema.pre("save", async function (next) {
-  // Calculate total amount with GST if services are modified or it's a new invoice
-  if (this.isModified("services") || this.isNew) {
-    const subtotal = this.services.reduce(
-      (acc, service) => acc + service.price,
-      0
-    );
-    this.totalAmount = subtotal * 1.18; // Add 18% GST
-  }
-
-  // Generate invoice number for new invoices
   if (this.isNew) {
     const lastInvoice = await this.constructor
       .findOne()

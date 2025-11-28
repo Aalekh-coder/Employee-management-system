@@ -30,3 +30,10 @@ export async function getAllProposalCustomer(id) {
   const { data } = await axiosInstance.get(`/api/customer/propsals/${id}`);
   return data;
 }
+
+// all Invoices of customer 
+
+export async function getAllinvoicesCustomer(id) {
+  const { data } = await axiosInstance.get(`/api/customer/invoice/${id}`);
+  return data;
+}

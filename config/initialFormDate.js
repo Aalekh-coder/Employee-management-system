@@ -52,3 +52,8 @@ export const initalServiceFormData = {
   duration: "",
 };
 
+export const initialInvoiceServiceFormData = {
+  serviceName: "",
+  HSN: "",
+  price: 0,
+};
