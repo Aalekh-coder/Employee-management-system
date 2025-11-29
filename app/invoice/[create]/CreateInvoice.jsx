@@ -170,7 +170,7 @@ const CreateInvoice = ({ id }) => {
     <div>
       <p className="font-bold text-2xl text-center">Create Invoice</p>
 
-      <div className="grid grid-cols-2 gap-5 md:grid-cols-1">
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2 ">
         <div>
           <CommonForm
             formControls={createInviceFormControls}

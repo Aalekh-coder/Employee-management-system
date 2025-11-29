@@ -41,3 +41,17 @@ export async function createInvoiceService(invoiceFormData) {
     toast.error(error.message || "error while creating the invoice");
   }
 }
+
+export async function getInvoiceAllInvoice() {
+  try {
+    const { data } = await axiosInstance.get("/api/invoice/get-all-invoice");
+
+    if (data.success) {
+      toast.success(data.message || "All invoices");
+      return data;
+    }
+  } catch (error) {
+    console.log(error);
+    toast.error(error.message || "error while getting all Invoices");
+  }
+}

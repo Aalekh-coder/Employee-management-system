@@ -1,5 +1,6 @@
 "use client";
 import { getAllinvoicesCustomer } from "@/service/customer";
+import { getInvoiceAllInvoice } from "@/service/invoice";
 import { BanknoteArrowUp, Download, Eye, Mail, Pencil } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -9,33 +10,21 @@ const AllInvoice = ({ customerId }) => {
   const [invoicesList, setInvoicesList] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  console.log(invoicesList,"invoicesList");
   async function fetchingInvoices() {
-    if (!customerId) {
-      setLoading(false);
-      return;
-    }
-    setLoading(true);
     try {
-      const response = await getAllinvoicesCustomer(customerId);
-      if (response.success) {
-        setInvoicesList(response.data);
-      } else {
-        toast.error(response.message || "Failed to fetch invoices.");
+      const res = await getInvoiceAllInvoice();
+      if (res.success) {
+        setInvoicesList(res.data);
+        setLoading(false)
       }
     } catch (error) {
-      console.log(error);
-      toast.error(
-        error.message || "An error occurred while fetching customer invoices."
-      );
-    } finally {
-      setLoading(false);
+      console.log(error.message || "error while fetching all invoices");
     }
   }
 
   useEffect(() => {
     fetchingInvoices();
-  }, [customerId]);
+  }, []);
 
   if (loading) {
     return (
@@ -50,11 +39,11 @@ const AllInvoice = ({ customerId }) => {
       <h1 className="text-center font-bold text-3xl mb-8">All Invoices</h1>
 
       <Link
-              href={`/invoice/${customerId}`}
-              className="fixed bottom-10 right-10 h-20 w-20 bg-blue-300 flex items-center justify-center rounded-full"
-            >
-              <BanknoteArrowUp size={30} />
-            </Link>
+        href={`/invoice/${customerId}`}
+        className="fixed bottom-10 right-10 h-20 w-20 bg-blue-300 flex items-center justify-center rounded-full"
+      >
+        <BanknoteArrowUp size={30} />
+      </Link>
 
       {invoicesList.length === 0 ? (
         <div className="text-center py-10 bg-gray-50 rounded-lg">
@@ -71,7 +60,7 @@ const AllInvoice = ({ customerId }) => {
                 >
                   Invoice #
                 </th>
-           
+
                 <th
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -107,7 +96,7 @@ const AllInvoice = ({ customerId }) => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     {invoice.invoiceNo}
                   </td>
-                
+
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     {invoice.clientName}
                   </td>
@@ -124,20 +113,18 @@ const AllInvoice = ({ customerId }) => {
                     }).format(invoice.totalAmount)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <div
-                      className="flex items-center gap-4"
-                    >
+                    <div className="flex items-center gap-4">
                       <div>
                         <Download />
                       </div>
-                      <div>
+                      <Link href={`/invoice/view-invoice/${invoice._id}`}>
                         <Eye />
-                      </div>
+                      </Link>
+                      <Link href={`/invoice/edit-invoice/${invoice._id}`}>
+                        <Pencil />
+                      </Link>
                       <div>
-                       <Pencil />
-                      </div>
-                      <div>
-                      <Mail />
+                        <Mail />
                       </div>
                     </div>
                   </td>
