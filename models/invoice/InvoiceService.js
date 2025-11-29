@@ -1,10 +1,25 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
-const ServiceInvoiceSchema = new mongoose.Schema({
-  serviceName: { type: String, required: true },
-  HSN: { type: String, required: true },
-  price: { type: Number, required: true },
-});
+const invoiceServiceSchema = new Schema(
+  {
+    serviceName: {
+      type: String,
+      required: true,
+    },
+    HSN: {
+      type: String,
+      required: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+  },
+  { timestamps: true }
+);
 
-export default mongoose.model.InvoiceService ||
-  mongoose.model("InvoiceService", ServiceInvoiceSchema);
+const InvoiceService =
+  mongoose.models.InvoiceService ||
+  mongoose.model("InvoiceService", invoiceServiceSchema);
+
+export default InvoiceService;

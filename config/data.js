@@ -286,6 +286,20 @@ export const createInviceFormControls = [
     componentType: "input",
     type: "date",
   },
+  {
+    label: "Discount",
+    name: "discount",
+    componentType: "input",
+    type: "text",
+    placeholder: "Enter Discount",
+  },
+  {
+    label: "Discount Percentage",
+    name: "discountPercentage",
+    componentType: "input",
+    type: "text",
+    placeholder: "Enter Discount Percentage",
+  },
 ];
 
 export const createServiceForInvoice = [
