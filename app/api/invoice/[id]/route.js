@@ -43,11 +43,10 @@ export async function PUT(req, context) {
   }
 }
 
-export async function GET(context) {
+export async function GET(req, context) {
   try {
     await connectDB();
     const { id } = await context.params;
-    
 
     let findInvoice = await Invoice.findById(id);
     if (!findInvoice) {
@@ -64,7 +63,7 @@ export async function GET(context) {
 
     return Response.json({
       success: true,
-      message: "Editing invoice details",
+      message: "Invoice details fetched successfully",
       data: findInvoice,
     });
   } catch (error) {
