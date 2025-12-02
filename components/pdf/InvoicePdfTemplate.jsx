@@ -17,7 +17,60 @@ Font.register({
   ],
 });
 
-const Invoice = () => {
+const Invoice = ({ data }) => {
+  if (!data) {
+    return null; // Return nothing if there's no data yet
+  }
+
+  const {
+    invoiceNo,
+    invoiceDate,
+    GSTIN,
+    clientAddress,
+    clientCompany,
+    clientName,
+    discount,
+    discountPercentage,
+    services,
+    tanNo,
+    taxType,
+    totalAmount,
+  } = data;
+
+  const formatDate = (dateString) => {
+    const options = { year: "numeric", month: "short", day: "2-digit" };
+    return new Date(dateString)
+      .toLocaleDateString("en-GB", options)
+      .replace(/ /g, "-");
+  };
+
+    const formatIndianCurrency = (num) => {
+    if (typeof num !== "number") return num;
+    return num.toLocaleString("en-IN", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  };
+
+   const subtotal = services.reduce(
+    (sum, service) => sum + service.price,
+    0
+  );
+
+  const discountAmount = discountPercentage
+    ? (subtotal * discountPercentage) / 100
+    : discount || 0;
+
+  const taxableAmount = subtotal - discountAmount;
+  // Assuming a fixed tax rate for SGST/CGST for demonstration, e.g., 18% (9% SGST + 9% CGST)
+  // This should ideally come from invoiceData or a configuration
+  const taxRate = 0.18; // 18% for SGST/CGST combined
+  const taxAmount = taxableAmount * taxRate;
+
+  const CgstAmount = taxableAmount * 0.09
+
+  console.log(taxType,"taxType");
+
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -37,8 +90,10 @@ const Invoice = () => {
 
         {/* invoice info */}
         <View style={styles.invoiceInfo}>
-          <Text style={{ marginTop: "6px" }}>Invoice No.: 2024100316</Text>
-          <Text style={{ marginBottom: "1px" }}>Invoice Date: 05-Jan-2025</Text>
+          <Text style={{ marginTop: "6px" }}>Invoice No.: {invoiceNo}</Text>
+          <Text style={{ marginBottom: "1px" }}>
+            Invoice Date: {formatDate(invoiceDate)}
+          </Text>
         </View>
 
         {/* customer details */}
@@ -47,26 +102,26 @@ const Invoice = () => {
 
           <Text>
             <Text style={styles.bold}>Client Name: </Text>
-            Vishal Gupta
+            {clientName || "error"}
           </Text>
 
           <Text>
             <Text style={styles.bold}>Company Name: </Text>
-            Vishal Enterprise
+            {clientCompany || "clientcompany"}
           </Text>
           <Text>
             <Text style={styles.bold}>GST No.: </Text>
-            07BONPG0167A1ZC
+            {GSTIN || "GSTIN"}
           </Text>
           <Text>
             <Text style={[styles.bold, { textAlign: "justify" }]}>
               Address:{" "}
             </Text>
-            Ground Floor, Plot No. 27, New Sabzi Mandi, Block C,
+            {clientAddress || "address"}
           </Text>
 
           <Text style={{ textAlign: "justify" }}>
-            Azadpur, New Delhi - 110033, Delhi, India
+            {/* {clientAddress.split("-")[1] || "address"} */}
           </Text>
         </View>
 
@@ -92,30 +147,40 @@ const Invoice = () => {
           </View>
 
           {/* table row example */}
-          <View style={styles.tableRow}>
-            <Text style={[styles.tableCell, { flex: 0.5 }]}>1</Text>
-            <Text
-              style={[
-                styles.tableCell,
-                {
-                  flex: 3,
-                  fontFamily: "LiberationSans",
-                  fontWeight: "bold",
-                },
-              ]}
-            >
-              Web Services
-            </Text>
-            <Text style={[styles.tableCell, { flex: 1, textAlign: "right" }]}>
-              998313
-            </Text>
-            <Text style={[styles.tableCell, { flex: 1, textAlign: "right" }]}>
-              000
-            </Text>
-            <Text style={[styles.tableCell, { flex: 1, textAlign: "right" }]}>
-              0000.00
-            </Text>
-          </View>
+          {services.map(({serviceName,HSN,price,_id},idx) => {
+            return (
+              <View style={styles.tableRow} key={_id}>
+                <Text style={[styles.tableCell, { flex: 0.5 }]}>{idx+1}</Text>
+                <Text
+                  style={[
+                    styles.tableCell,
+                    {
+                      flex: 3,
+                      fontFamily: "LiberationSans",
+                      fontWeight: "bold",
+                    },
+                  ]}
+                >
+                  {serviceName || "service Name"}
+                </Text>
+                <Text
+                  style={[styles.tableCell, { flex: 1, textAlign: "right" }]}
+                >
+                  {HSN || "hsm code"}
+                </Text>
+                <Text
+                  style={[styles.tableCell, { flex: 1, textAlign: "right" }]}
+                >
+                  
+                </Text>
+                <Text
+                  style={[styles.tableCell, { flex: 1, textAlign: "right" }]}
+                >
+                 {formatIndianCurrency(price) || "price"}
+                </Text>
+              </View>
+            );
+          })}
 
           {/* taxable amount */}
           <View style={styles.tableRow}>
@@ -136,7 +201,7 @@ const Invoice = () => {
                 { flex: 1, fontSize: 8, textAlign: "right" },
               ]}
             >
-              00000.00
+              {formatIndianCurrency(subtotal)}
             </Text>
           </View>
 
@@ -171,7 +236,7 @@ const Invoice = () => {
                 { flex: 1, fontSize: 8, textAlign: "right" },
               ]}
             >
-              000.00
+              {formatIndianCurrency(CgstAmount) || "000.00"}
             </Text>
           </View>
 
@@ -201,7 +266,7 @@ const Invoice = () => {
                 { flex: 1, fontSize: 8, textAlign: "right" },
               ]}
             >
-              000.00
+              {formatIndianCurrency(CgstAmount) || "000.00"}
             </Text>
           </View>
 
@@ -231,7 +296,7 @@ const Invoice = () => {
                 { flex: 1, fontSize: 8, textAlign: "right" },
               ]}
             >
-              000.00
+             {formatIndianCurrency(taxAmount) || "000.00"}
             </Text>
           </View>
 
@@ -254,7 +319,7 @@ const Invoice = () => {
                 { flex: 1, fontWeight: "bold", textAlign: "right" },
               ]}
             >
-              000.00
+              {totalAmount || "000.00"}
             </Text>
           </View>
         </View>

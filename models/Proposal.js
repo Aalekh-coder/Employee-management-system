@@ -27,8 +27,8 @@ const ProposalSchema = new mongoose.Schema(
 
     services: [
       {
-        type: mongoose.Schema.ObjectId,
-        ref: "Service",
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Service", // ★ THIS IS REQUIRED
       },
     ],
 

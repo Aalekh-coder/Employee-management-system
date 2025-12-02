@@ -6,9 +6,7 @@ import {
   initialPerposelFormData,
 } from "@/config/initialFormDate";
 import { getCustomerServices } from "@/service/customer";
-import {
-  createProposelService,
-} from "@/service/proposal";
+import { createProposelService } from "@/service/proposal";
 import { createServicesService, getAllService } from "@/service/service";
 
 import React, { useEffect, useState } from "react";
@@ -23,11 +21,7 @@ const Proposal = ({ customerId }) => {
   const { Address, GSTIN, city, company, country, name, phone, tanNo, email } =
     clientDetails;
 
-
   const [serviceFormData, setServiceFormData] = useState(initalServiceFormData);
-
-
-
 
   function calculationOfTotalAmount() {
     const totalServicePrice = selectedServices.reduce(
@@ -156,10 +150,8 @@ const Proposal = ({ customerId }) => {
 
   useEffect(() => {
     customerDetails();
-    fetchAllServices()
+    fetchAllServices();
   }, []);
-
-
 
   const handleSelectService = (service) => {
     setSelectedServices((prevSelected) => {
@@ -191,29 +183,40 @@ const Proposal = ({ customerId }) => {
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 py-3 ">
-            {servicesItem.map((item) => (
-              <button
-                key={item?._id}
-                onClick={() => handleSelectService(item)}
-                className={`group block rounded-lg p-4 border shadow-sm transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
-                  selectedServices.some((s) => s?._id === item?._id)
-                    ? "bg-blue-100 border-blue-400"
-                    : "bg-white border-gray-200 hover:shadow-md hover:border-gray-300"
-                }`}
-              >
-                <div className="text-center">
-                  <p className="font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">
-                    {item?.serviceTitle}
-                  </p>
-                </div>
-                <div className="mt-2 flex justify-between items-center text-sm text-gray-500">
-                  <span>{item?.duration}</span>
-                  <span className="font-bold text-gray-700">
-                    ₹ {item?.amount?.toLocaleString("en-IN")}
-                  </span>
-                </div>
-              </button>
-            ))}
+            {!servicesItem.length ? (
+              <div className="flex items-center justify-center bg-red-500 border-2 border-dashed border-gray-400 rounded-lg p-4 text-white hover:bg-red-500 transition-colors duration-200">
+                Add some service
+              </div>
+            ) : (
+              servicesItem.map((item) => (
+                <button
+                  key={item?._id}
+                  onClick={() => handleSelectService(item)}
+                  className={`group block rounded-lg p-4 border shadow-sm transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
+                    selectedServices.some((s) => s?._id === item?._id)
+                      ? "bg-blue-100 border-blue-400"
+                      : "bg-white border-gray-200 hover:shadow-md hover:border-gray-300"
+                  }`}
+                >
+                  <div className="text-center">
+                    <p className="font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">
+                      {item?.serviceTitle}
+                    </p>
+                    {item?.description && (
+                      <p className="font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">
+                        {item?.description}
+                      </p>
+                    )}
+                  </div>
+                  <div className="mt-2 flex justify-between items-center text-sm text-gray-500">
+                    <span>{item?.duration}</span>
+                    <span className="font-bold text-gray-700">
+                      ₹ {item?.amount?.toLocaleString("en-IN")}
+                    </span>
+                  </div>
+                </button>
+              ))
+            )}
           </div>
         </div>
 

@@ -5,7 +5,7 @@ export async function POST(req) {
   try {
     await connectDB();
 
-    const { serviceTitle, amount, duration } = await req.json();
+    const { serviceTitle, amount, duration,description } = await req.json();
 
     if (!serviceTitle || !amount || !duration) {
       return Response.json({
@@ -14,7 +14,7 @@ export async function POST(req) {
       });
     }
 
-    const newService = await Service.create({ serviceTitle, amount, duration });
+    const newService = await Service.create({ serviceTitle, amount, duration,description });
 
     return Response.json(
       {

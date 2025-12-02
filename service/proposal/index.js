@@ -1,3 +1,4 @@
+import toast from "react-hot-toast";
 import axiosInstance from "../axiosInstance";
 
 export async function createProposelService(formData) {
@@ -18,4 +19,19 @@ export async function getProposalByIdService(id) {
 export async function editProposalService(id, formData) {
   const { data } = await axiosInstance.put(`/api/proposals/${id}`, formData);
   return data;
+}
+
+export async function pdfDownloadService(id) {
+  try {
+    const { data } = await axiosInstance.get(
+      `/api/proposals/pdf-download-proposal/${id}`
+    );
+    if (data.success) {
+      toast.success(data.message);
+      return data;
+    }
+  } catch (error) {
+    console.log(error);
+    toast.error(error.message);
+  }
 }

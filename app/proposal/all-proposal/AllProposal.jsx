@@ -102,9 +102,7 @@ const AllProposal = () => {
                     </p>
                   </div>
                   <div className="mt-5 flex gap-4">
-                    <div className="bg-gray-200 border-black h-10 w-10 flex items-center justify-center rounded-full">
-                      <Download />
-                    </div>
+                    
                     <Link
                       href={`/proposal/edit-proposal/${item?._id}`}
                       className="bg-gray-200 border-black h-10 w-10 flex items-center justify-center rounded-full"
@@ -117,6 +115,11 @@ const AllProposal = () => {
                     >
                       <Trash2 />
                     </div>
+                    <Link href={`/proposal/pdf-download/${item?._id}`}
+                      className="bg-gray-200 border-black h-10 w-10 flex items-center justify-center rounded-full"
+                    >
+                      <Download />
+                    </Link>
                     
                   </div>
                 </div>

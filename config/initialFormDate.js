@@ -10,6 +10,7 @@ export const initialservicesFormData = {
   serviceName: "",
   duration: "",
   price: "",
+  description:""
 };
 export const initialservicesforInvoiceFormData = {
   serviceName: "",

@@ -6,11 +6,13 @@ export async function GET(req, context) {
     await connectDB();
     const { id } = await context.params;
 
+    console.log(id);
+
     let invoiceFromDb = await Invoice.findById(id).populate({
-      path: "services", // Assuming the path in your Mongoose schema is 'services'
+      path: "services",
       select: "serviceName HSN price",
     });
-    if (!findInvoice) {
+    if (!invoiceFromDb) {
       return Response.json(
         {
           message: "Invoice does not exits",
@@ -25,14 +27,14 @@ export async function GET(req, context) {
     // Transform the data to match the frontend's expectations
     const findInvoice = {
       ...invoiceFromDb.toObject(),
-      services: invoiceFromDb.services.map(service => ({
+      services: invoiceFromDb.services.map((service) => ({
         id: service._id,
         description: service.serviceName,
         // Assuming quantity is always 1 and rate is the price from the DB
-        quantity: 1, 
+        quantity: 1,
         rate: service.price,
         amount: service.price, // Assuming amount is same as rate for quantity 1
-      }))
+      })),
     };
 
     return Response.json({
@@ -45,7 +47,7 @@ export async function GET(req, context) {
     return Response.json(
       {
         success: false,
-        message: "server error",
+        message: "server error hai",
       },
       {
         status: 500,

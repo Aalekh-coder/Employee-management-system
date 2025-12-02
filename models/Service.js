@@ -7,5 +7,5 @@ const ServiceSchema = new mongoose.Schema({
   description: { type: String },
 });
 
-export default mongoose.model.Service ||
+export default mongoose.models.Service ||
   mongoose.model("Service", ServiceSchema);

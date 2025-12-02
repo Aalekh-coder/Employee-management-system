@@ -4,10 +4,8 @@ import Customer from "@/models/Customer";
 
 export async function POST(req) {
   try {
-    // 1️⃣ Connect to DB
     await connectDB();
 
-    // 2️⃣ Read JSON data
     const data = await req.json();
 
     const proposal = await Proposal.create(data);

@@ -1,19 +1,23 @@
 import { connectDB } from "@/lib/db";
 import Invoice from "@/models/invoice/Invoice";
+import InvoiceService from "@/models/invoice/InvoiceService"; // Make sure to import this for population
 
 export async function GET(req, context) {
   try {
     await connectDB();
     const { id } = await context.params;
 
-    let invoiceFromDb = await Invoice.findById(id).populate({
-      path: "services", // Corrected path to match the schema
+    // Find the invoice by its ID and populate the services
+    const invoiceFromDb = await Invoice.findById(id).populate({
+      path: "services",
+      model: "InvoiceService",
       select: "serviceName HSN price",
     });
+
     if (!invoiceFromDb) {
       return Response.json(
         {
-          message: "Invoice does not exits",
+          message: "Invoice for PDF download not found",
           success: false,
         },
         {
@@ -22,30 +26,17 @@ export async function GET(req, context) {
       );
     }
 
-    // Transform the data to match the frontend's expectations, just like in the other API route
-    const findInvoice = {
-      ...invoiceFromDb.toObject(),
-      services: invoiceFromDb.services.map((service) => ({
-        id: service._id,
-        description: service.serviceName,
-        HSN: service.HSN,
-        quantity: 1,
-        rate: service.price,
-        amount: service.price,
-      })),
-    };
-
     return Response.json({
       success: true,
-      message: "Invoice details fetched successfully",
-      data: findInvoice,
+      message: "PDF data fetched successfully",
+      data: invoiceFromDb,
     });
   } catch (error) {
-    console.log("Error while editing invoice", error);
+    console.log("Error while fetching invoice for PDF", error);
     return Response.json(
       {
         success: false,
-        message: "server error",
+        message: "Server error while fetching PDF data",
       },
       {
         status: 500,

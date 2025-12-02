@@ -179,6 +179,13 @@ export const ServiceFormControl = [
     placeholder: "Enter Service Title",
   },
   {
+    label: "Service Desciption",
+    name: "description",
+    componentType: "input",
+    type: "text",
+    placeholder: "Enter Service Desciption",
+  },
+  {
     label: "amount",
     name: "amount",
     componentType: "input",
