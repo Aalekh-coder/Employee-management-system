@@ -57,19 +57,20 @@ const Invoice = ({ data }) => {
     0
   );
 
+  console.log(subtotal,"subtotal");
+
   const discountAmount = discountPercentage
     ? (subtotal * discountPercentage) / 100
     : discount || 0;
 
   const taxableAmount = subtotal - discountAmount;
-  // Assuming a fixed tax rate for SGST/CGST for demonstration, e.g., 18% (9% SGST + 9% CGST)
-  // This should ideally come from invoiceData or a configuration
-  const taxRate = 0.18; // 18% for SGST/CGST combined
+
+  const taxRate = 0.18; 
   const taxAmount = taxableAmount * taxRate;
 
   const CgstAmount = taxableAmount * 0.09
 
-  console.log(taxType,"taxType");
+
 
   return (
     <Document>
@@ -201,7 +202,7 @@ const Invoice = ({ data }) => {
                 { flex: 1, fontSize: 8, textAlign: "right" },
               ]}
             >
-              {formatIndianCurrency(subtotal)}
+              {formatIndianCurrency(taxableAmount)}
             </Text>
           </View>
 

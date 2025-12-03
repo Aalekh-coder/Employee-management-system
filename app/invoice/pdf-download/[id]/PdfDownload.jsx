@@ -8,8 +8,6 @@ const PdfDownload = ({ id }) => {
   const [loading, setLoading] = useState(true);
   const [pdfData, setPdfData] = useState(null);
 
-
-
   async function fetchingPdfInfo(invoiceId) {
     try {
       const res = await pdfDownloaderById(invoiceId);
