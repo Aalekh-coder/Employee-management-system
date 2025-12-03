@@ -1,5 +1,7 @@
-import Image from "next/image";
 
-export default function Home() {
-  return <div>welcome to crm</div>;
+import Home from "@/components/pages/Home/Home";
+export default function page() {
+  return <div>
+    <Home></Home>
+    </div>;
 }
