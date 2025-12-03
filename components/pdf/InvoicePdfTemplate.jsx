@@ -319,7 +319,7 @@ const Invoice = ({ data }) => {
                 { flex: 1, fontWeight: "bold", textAlign: "right" },
               ]}
             >
-              {totalAmount || "000.00"}
+              {totalAmount.toFixed(2) || "000.00"}
             </Text>
           </View>
         </View>
