@@ -117,7 +117,7 @@ export const addCustomerFormControl = [
     label: "Phone no.",
     name: "phone",
     componentType: "input",
-    type: "number",
+    type: "text",
     placeholder: "Enter Contact No",
   },
   {
