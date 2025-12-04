@@ -9,14 +9,14 @@ export const addProposalFormControl = [
     label: "Discount",
     name: "discount",
     componentType: "input",
-    type: "number",
+    type: "text",
     placeholder: "Enter Discount",
   },
   {
     label: "Discount Percentage",
     name: "discountPercentage",
     componentType: "input",
-    type: "number",
+    type: "text",
     placeholder: "Enter Discount Percentage",
   },
   {
@@ -292,20 +292,6 @@ export const createInviceFormControls = [
     name: "invoiceDate",
     componentType: "input",
     type: "date",
-  },
-  {
-    label: "Discount",
-    name: "discount",
-    componentType: "input",
-    type: "text",
-    placeholder: "Enter Discount",
-  },
-  {
-    label: "Discount Percentage",
-    name: "discountPercentage",
-    componentType: "input",
-    type: "text",
-    placeholder: "Enter Discount Percentage",
   },
 ];
 

@@ -114,9 +114,9 @@ const AllInvoice = ({ customerId }) => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex items-center gap-4">
-                      <div>
+                      <Link href={`/invoice/pdf-download/${invoice._id}`}>
                         <Download />
-                      </div>
+                      </Link>
                       <Link href={`/invoice/view-invoice/${invoice._id}`}>
                         <Eye />
                       </Link>

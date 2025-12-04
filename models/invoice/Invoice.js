@@ -38,8 +38,6 @@ const InvoiceSchema = new mongoose.Schema(
     totalAmount: {
       type: Number,
     },
-    discount: { type: Number, default: 0 },
-    discountPercentage: { type: Number, default: 0 },
     invoiceNo: {
       type: String,
       unique: true,

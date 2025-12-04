@@ -43,7 +43,6 @@ const CreateInvoice = () => {
       services: serviceList,
     };
 
-    console.log(invoiceData);
   };
 
   function handleRemoveService(indexToRemove) {

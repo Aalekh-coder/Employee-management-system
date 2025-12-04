@@ -29,8 +29,6 @@ const Invoice = ({ data }) => {
     clientAddress,
     clientCompany,
     clientName,
-    discount,
-    discountPercentage,
     services,
     tanNo,
     taxType,
@@ -44,7 +42,7 @@ const Invoice = ({ data }) => {
       .replace(/ /g, "-");
   };
 
-    const formatIndianCurrency = (num) => {
+  const formatIndianCurrency = (num) => {
     if (typeof num !== "number") return num;
     return num.toLocaleString("en-IN", {
       minimumFractionDigits: 2,
@@ -52,25 +50,17 @@ const Invoice = ({ data }) => {
     });
   };
 
-   const subtotal = services.reduce(
-    (sum, service) => sum + service.price,
-    0
-  );
+  const subtotal = services.reduce((sum, service) => sum + service.price, 0);
 
-  console.log(subtotal,"subtotal");
+  const tdsAmount = subtotal * 0.02;
 
-  const discountAmount = discountPercentage
-    ? (subtotal * discountPercentage) / 100
-    : discount || 0;
 
-  const taxableAmount = subtotal - discountAmount;
+  const taxableAmount = subtotal ;
 
-  const taxRate = 0.18; 
+  const taxRate = 0.18;
   const taxAmount = taxableAmount * taxRate;
 
-  const CgstAmount = taxableAmount * 0.09
-
-
+  const CgstAmount = taxableAmount * 0.09;
 
   return (
     <Document>
@@ -148,10 +138,10 @@ const Invoice = ({ data }) => {
           </View>
 
           {/* table row example */}
-          {services.map(({serviceName,HSN,price,_id},idx) => {
+          {services.map(({ serviceName, HSN, price, _id }, idx) => {
             return (
               <View style={styles.tableRow} key={_id}>
-                <Text style={[styles.tableCell, { flex: 0.5 }]}>{idx+1}</Text>
+                <Text style={[styles.tableCell, { flex: 0.5 }]}>{idx + 1}</Text>
                 <Text
                   style={[
                     styles.tableCell,
@@ -171,40 +161,40 @@ const Invoice = ({ data }) => {
                 </Text>
                 <Text
                   style={[styles.tableCell, { flex: 1, textAlign: "right" }]}
-                >
-                  
-                </Text>
+                ></Text>
                 <Text
                   style={[styles.tableCell, { flex: 1, textAlign: "right" }]}
                 >
-                 {formatIndianCurrency(price) || "price"}
+                  {formatIndianCurrency(price) || "price"}
                 </Text>
               </View>
             );
           })}
 
           {/* taxable amount */}
-          <View style={styles.tableRow}>
-            <Text style={[styles.tableCell, { flex: 0.5 }]}></Text>
-            <Text
-              style={[
-                styles.tableCell,
-                { flex: 3, textAlign: "right", fontSize: 8 },
-              ]}
-            >
-              Taxable Amount
-            </Text>
-            <Text style={[styles.tableCell, { flex: 1 }]}></Text>
-            <Text style={[styles.tableCell, { flex: 1 }]}></Text>
-            <Text
-              style={[
-                styles.tableCell,
-                { flex: 1, fontSize: 8, textAlign: "right" },
-              ]}
-            >
-              {formatIndianCurrency(taxableAmount)}
-            </Text>
-          </View>
+          {tanNo && (
+            <View style={styles.tableRow}>
+              <Text style={[styles.tableCell, { flex: 0.5 }]}></Text>
+              <Text
+                style={[
+                  styles.tableCell,
+                  { flex: 3, textAlign: "right", fontSize: 8 },
+                ]}
+              >
+                TDS Amount
+              </Text>
+              <Text style={[styles.tableCell, { flex: 1 }]}></Text>
+              <Text style={[styles.tableCell, { flex: 1 }]}></Text>
+              <Text
+                style={[
+                  styles.tableCell,
+                  { flex: 1, fontSize: 8, textAlign: "right" },
+                ]}
+              >
+                {formatIndianCurrency(tdsAmount)}
+              </Text>
+            </View>
+          )}
 
           {/* cgst row */}
           <View style={styles.tableRow}>
@@ -297,7 +287,7 @@ const Invoice = ({ data }) => {
                 { flex: 1, fontSize: 8, textAlign: "right" },
               ]}
             >
-             {formatIndianCurrency(taxAmount) || "000.00"}
+              {formatIndianCurrency(taxAmount) || "000.00"}
             </Text>
           </View>
 

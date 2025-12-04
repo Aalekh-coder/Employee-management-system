@@ -21,8 +21,6 @@ const CreateInvoice = ({ id }) => {
   const [invoiceFormData, setInvoiceFormData] = useState({
     taxType: "",
     invoiceDate: "",
-    discount: "",
-    discountPercentage: "",
   });
   const [clientDetails, setClientDetails] = useState({});
 
@@ -36,41 +34,24 @@ const CreateInvoice = ({ id }) => {
 
   const [selectedServices, setSelectedServices] = useState([]);
 
+  // maths calculation
+  function calculationOfTotalAmount() {
+    const totalServicePrice = selectedServices.reduce(
+      (total, service) => total + Number(service.price || 0),
+      0
+    );
 
-function calculationOfTotalAmount() {
-  // 1️⃣ Calculate total price of selected services
-  const totalServicePrice = selectedServices.reduce(
-    (total, service) => total + Number(service.price || 0),
-    0
-  );
+    let tdsAmount;
 
-  let priceAfterDiscount = totalServicePrice;
+    if (tanNo) {
+      tdsAmount = totalServicePrice * 0.02;
+    }
 
-  // 2️⃣ Apply discount percentage
-  if (invoiceFormData?.discountPercentage > 0) {
-    const discountValue =
-      (totalServicePrice * invoiceFormData.discountPercentage) / 100;
+    const taxAmount = totalServicePrice * 0.18;
 
-    priceAfterDiscount = totalServicePrice - discountValue;
-
-  // 3️⃣ Apply flat discount
-  } else if (invoiceFormData?.discount > 0) {
-    priceAfterDiscount = totalServicePrice - invoiceFormData.discount;
+    const totalAmount = taxAmount + totalServicePrice - tdsAmount;
+    return totalAmount;
   }
-
-  // 4️⃣ Apply TDS ONLY IF tanNo does NOT exist
-  // (No TAN → deduct 2%, Yes TAN → no deduction)
-  if (!tanNo) {
-    priceAfterDiscount = priceAfterDiscount * 0.98;
-  }
-
-  // 5️⃣ Add 18% GST
-  const finalAmountWithGST = priceAfterDiscount * 1.18;
-
-  // 6️⃣ Final amount rounded
-  return Number(finalAmountWithGST.toFixed(2));
-}
-
 
   const invoiceFormDate = {
     clientId: id,
@@ -79,8 +60,6 @@ function calculationOfTotalAmount() {
     clientAddress: `${Address} -${city} -${country}`,
     GSTIN,
     tanNo,
-    discount: invoiceFormData?.discount,
-    discountPercentage: invoiceFormData?.discountPercentage,
     services: selectedServices.map(({ _id }) => _id),
     taxType: invoiceFormData?.taxType,
     invoiceDate: invoiceFormData?.invoiceDate,
@@ -118,22 +97,6 @@ function calculationOfTotalAmount() {
       toast.error(
         "Please fill in all required fields like Invoice Date and Tax Type."
       );
-      return;
-    }
-
-    // 3. Validate discount fields
-    if (invoiceFormData.discount && invoiceFormData.discountPercentage) {
-      toast.error(
-        "Please use either a discount amount or a percentage, not both."
-      );
-      return;
-    }
-
-    if (
-      invoiceFormData.discount < 0 ||
-      invoiceFormData.discountPercentage < 0
-    ) {
-      toast.error("Discount values cannot be negative.");
       return;
     }
 

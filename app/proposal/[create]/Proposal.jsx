@@ -124,6 +124,15 @@ const Proposal = ({ customerId }) => {
         return;
       }
 
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // Reset time to compare dates only
+      const validTillDate = new Date(formData.validTill);
+
+      if (validTillDate <= today) {
+        toast.error("'Valid Till' date must be a future date.");
+        return;
+      }
+
       const response = await createProposelService(propsalAllItemForm);
       if (response.success) {
         toast.success("Proposal created successfully!");
