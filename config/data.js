@@ -32,7 +32,7 @@ export const addProposalFormControl = [
     options: [
       { id: "upi", label: "UPI" },
       { id: "card", label: "Card" },
-      { id: "bank", label: "Bank" },
+      { id: "net banking", label: "Net Banking" },
     ],
   },
 ];
@@ -186,7 +186,7 @@ export const ServiceFormControl = [
     placeholder: "Enter Service Desciption",
   },
   {
-    label: "amount",
+    label: "Amount",
     name: "amount",
     componentType: "input",
     type: "text",
@@ -203,6 +203,7 @@ export const ServiceFormControl = [
       { id: "9 Month", label: "9 Month" },
       { id: "1 Year", label: "1 Year" },
       { id: "2 Year", label: "2 Year" },
+      { id: "3 Year", label: "3 Year" },
     ],
   },
 ];
@@ -314,7 +315,7 @@ export const createServiceForInvoice = [
     label: "Price",
     name: "price",
     componentType: "input",
-    type: "number",
+    type: "text",
     placeholder: "Enter Service price",
   },
 ];

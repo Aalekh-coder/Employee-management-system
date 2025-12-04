@@ -9,7 +9,6 @@ const Customer = ({ customerId }) => {
   const fetchCurrentCustomer = async () => {
     try {
       const response = await getCustomerServices(customerId);
-      console.log(response);
       if (response.success) {
         toast.success("Customer details fetched");
         setCustomerDetails(response.data);

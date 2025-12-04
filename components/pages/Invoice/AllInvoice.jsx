@@ -9,7 +9,6 @@ const AllInvoice = ({ customerId }) => {
   const [invoicesList, setInvoicesList] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  console.log(invoicesList, "invoicesList");
   async function fetchingInvoices() {
     if (!customerId) {
       setLoading(false);
