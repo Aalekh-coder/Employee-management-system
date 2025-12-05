@@ -7,12 +7,20 @@ import {
 } from "@/config/initialFormDate";
 import { getCustomerServices } from "@/service/customer";
 import { createProposelService } from "@/service/proposal";
-import { createServicesService, getAllService } from "@/service/service";
+import {
+  createServicesService,
+  fetchProposalServiceById,
+  editService,
+  getAllService,
+  deleteService,
+} from "@/service/service";
+import { Edit, Trash } from "lucide-react";
 
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 const Proposal = ({ customerId }) => {
+  // ---------------- STATE ----------------
   const [formData, setFormData] = useState(initialPerposelFormData);
   const [servicesItem, setServicesItem] = useState([]);
   const [selectedServices, setSelectedServices] = useState([]);
@@ -22,6 +30,12 @@ const Proposal = ({ customerId }) => {
     clientDetails;
 
   const [serviceFormData, setServiceFormData] = useState(initalServiceFormData);
+
+  // ---------------- Editing state ----------------
+  const [editProposalServiceId, setEditProposalServiceId] = useState(null);
+  const [proposalServiceEditData, setProposalServiceEditData] = useState(
+    initalServiceFormData
+  );
 
   function calculationOfTotalAmount() {
     const totalServicePrice = selectedServices.reduce(
@@ -78,9 +92,10 @@ const Proposal = ({ customerId }) => {
     }
   }
 
+  // add services
   async function handleService(e) {
     e.preventDefault();
-
+    console.log(serviceFormData, "serviceFormData");
     try {
       if (
         !serviceFormData.serviceTitle ||
@@ -89,11 +104,30 @@ const Proposal = ({ customerId }) => {
       ) {
         toast.error("please fill the service details");
       }
+
+      if (
+        serviceFormData.discountAmount &&
+        serviceFormData.discountPercentage
+      ) {
+        toast.error("Can't use both discount Amount and Percentage");
+        return;
+      }
+
+      if (serviceFormData.discountPercentage > 40) {
+        toast.error("Discount can't be more than 40 Percentage");
+        return;
+      }
+
+      if (serviceFormData.discountAmount > serviceFormData.amount) {
+        toast.error("Discount can't be more than service Amount");
+      }
+
       const response = await createServicesService(serviceFormData);
       if (response.success) {
         toast.success(response.message);
         setServiceFormData(initalServiceFormData);
         fetchAllServices();
+        console.log(response);
       }
     } catch (error) {
       console.log(error);
@@ -157,6 +191,39 @@ const Proposal = ({ customerId }) => {
     }
   }
 
+  // ---------------- Editing function ----------------
+  async function getProposalServiceIdForEdit(id) {
+    setEditProposalServiceId(id);
+
+    const res = await fetchProposalServiceById(id);
+    if (res.success) {
+      setProposalServiceEditData(res?.data);
+    }
+  }
+
+  async function handleEditProposalService(e) {
+    e.preventDefault();
+
+    try {
+      const res = await editService(
+        editProposalServiceId,
+        proposalServiceEditData
+      );
+
+      if (res.success) {
+        toast.success("Service Updated successfully");
+        setProposalServiceEditData(initalServiceFormData);
+        fetchAllServices();
+        setEditProposalServiceId(null);
+      } else {
+        toast.error(res.message || "Failed to update service");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message || "Error updating services");
+    }
+  }
+
   useEffect(() => {
     customerDetails();
     fetchAllServices();
@@ -172,6 +239,18 @@ const Proposal = ({ customerId }) => {
       }
     });
   };
+
+  // ---------------- Delete function ----------------
+
+  async function handleDeleteService(id) {
+    const confirm = window.confirm("Are you sure to delete the service");
+    if (confirm) {
+      const res = await deleteService(id);
+      if (res.success) {
+        fetchAllServices();
+      }
+    }
+  }
 
   useEffect(() => {
     const serviceIds = selectedServices.map((s) => s._id);
@@ -198,38 +277,88 @@ const Proposal = ({ customerId }) => {
               </div>
             ) : (
               servicesItem.map((item) => (
-                <button
-                  key={item?._id}
-                  onClick={() => handleSelectService(item)}
-                  className={`group block rounded-lg p-4 border shadow-sm transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
-                    selectedServices.some((s) => s?._id === item?._id)
-                      ? "bg-blue-100 border-blue-400"
-                      : "bg-white border-gray-200 hover:shadow-md hover:border-gray-300"
-                  }`}
-                >
-                  <div className="text-center">
-                    <p className="font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">
-                      {item?.serviceTitle}
-                    </p>
-                    {item?.description && (
-                      <p className="font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">
-                        {item?.description}
+                <div key={item?._id} className="flex flex-col">
+                  <button
+                    onClick={() => handleSelectService(item)}
+                    className={`group block rounded-t-lg p-4 border shadow-sm transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
+                      selectedServices.some((s) => s?._id === item?._id)
+                        ? "bg-blue-100 border-blue-400"
+                        : "bg-white border-gray-200 hover:shadow-md hover:border-gray-300"
+                    }`}
+                  >
+                    <div className="text-center">
+                      <p className="font-semibold text-gray-800 group-hover:text-blue-600 transition-colors py-2">
+                        {item?.serviceTitle}
+                      </p>
+                      {item?.description && (
+                        <p className="font-semibold text-gray-800 group-hover:text-blue-600 transition-colors border-t py-2">
+                          {item?.description}
+                        </p>
+                      )}
+                    </div>
+
+                    {item?.discountPercentage ? (
+                      <p>Discount Percentage : {item?.discountPercentage}%</p>
+                    ) : (
+                      <p>
+                        Discount Amount : ₹{" "}
+                        {item?.discountAmount.toLocaleString("en-IN")}
                       </p>
                     )}
+
+                    <div className="mt-2 flex justify-between items-center text-sm text-gray-500">
+                      <span>{item?.duration}</span>
+                      <span className="font-bold text-gray-700">
+                        ₹ {item?.amount?.toLocaleString("en-IN")}
+                      </span>
+                    </div>
+                  </button>
+
+                  <div className="flex justify-between px-4 py-3 border rounded-b-2xl ">
+                    <div
+                      onClick={() => getProposalServiceIdForEdit(item?._id)}
+                      className="bg-blue-300 p-2 rounded-full cursor-pointer"
+                    >
+                      <Edit />
+                    </div>
+                    <div
+                      onClick={() => handleDeleteService(item?._id)}
+                      className="bg-red-300 p-2 rounded-full cursor-pointer"
+                    >
+                      <Trash />
+                    </div>
                   </div>
-                  <div className="mt-2 flex justify-between items-center text-sm text-gray-500">
-                    <span>{item?.duration}</span>
-                    <span className="font-bold text-gray-700">
-                      ₹ {item?.amount?.toLocaleString("en-IN")}
-                    </span>
-                  </div>
-                </button>
+                </div>
               ))
             )}
           </div>
         </div>
 
         <div className="flex flex-col gap-5">
+          <div>
+            <CommonForm
+              formControls={ServiceFormControl}
+              formData={
+                editProposalServiceId
+                  ? proposalServiceEditData
+                  : serviceFormData
+              }
+              setFormData={
+                editProposalServiceId
+                  ? setProposalServiceEditData
+                  : setServiceFormData
+              }
+              onSubmit={
+                editProposalServiceId
+                  ? handleEditProposalService
+                  : handleService
+              }
+              buttonText={
+                editProposalServiceId ? "Edit Service" : "Add Service"
+              }
+            />
+          </div>
+
           <div className="border flex flex-col p-6 rounded-lg shadow-md bg-gray-50">
             <h2 className="text-xl font-semibold mb-1 border-b pb-1 text-gray-700">
               Client Details
@@ -257,16 +386,6 @@ const Proposal = ({ customerId }) => {
                 <strong>GSTIN:</strong> {GSTIN}
               </p>
             </div>
-          </div>
-
-          <div>
-            <CommonForm
-              formControls={ServiceFormControl}
-              formData={serviceFormData}
-              setFormData={setServiceFormData}
-              onSubmit={handleService}
-              buttonText={"Add Service"}
-            />
           </div>
         </div>
       </div>
