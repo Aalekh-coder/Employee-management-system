@@ -15,11 +15,14 @@ import {
   deleteService,
 } from "@/service/service";
 import { Edit, Trash } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 const Proposal = ({ customerId }) => {
+  const navigate = useRouter();
+
   // ---------------- STATE ----------------
   const [formData, setFormData] = useState(initialPerposelFormData);
   const [servicesItem, setServicesItem] = useState([]);
@@ -127,7 +130,6 @@ const Proposal = ({ customerId }) => {
         toast.success(response.message);
         setServiceFormData(initalServiceFormData);
         fetchAllServices();
-        console.log(response);
       }
     } catch (error) {
       console.log(error);
@@ -168,10 +170,12 @@ const Proposal = ({ customerId }) => {
       }
 
       const response = await createProposelService(propsalAllItemForm);
+      console.log(response);
       if (response.success) {
         toast.success("Proposal created successfully!");
         setFormData(initialPerposelFormData);
         setSelectedServices([]);
+        navigate.push(`/proposal/pdf-download/${response.data._id}`);
       }
     } catch (error) {
       console.log(error);

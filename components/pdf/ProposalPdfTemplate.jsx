@@ -9,12 +9,23 @@ import {
 } from "@react-pdf/renderer";
 
 const ProposalPdfTemplate = ({ data }) => {
-  // If there's no data, return null to avoid rendering errors
   if (!data) {
     return null;
   }
 
-  // console.log(data);
+  // Function to convert number to currency words
+  // const toCurrencyWords = (num) => {
+  //   const [integerPart, decimalPart] = num.toFixed(2).split('.');
+  //   let words = toWords(Number(integerPart));
+  //   words = words.charAt(0).toUpperCase() + words.slice(1) + " Rupees"; // Capitalize first letter
+
+  //   if (decimalPart && Number(decimalPart) > 0) {
+  //     words += " and " + toWords(Number(decimalPart)) + " Paise";
+  //   }
+  //   return words;
+  // };
+  // const amountInWords = toCurrencyWords(totalPayableAmount);
+
   // Format the date for display
   const proposalDate = new Date(data.dateOfProposal).toLocaleDateString(
     "en-GB",
@@ -23,48 +34,49 @@ const ProposalPdfTemplate = ({ data }) => {
 
   return (
     <Document style={{ marginTop: "0" }}>
-    {/* PAGE 1 */}
-    <Page size="A4" style={styles.page} orientation="portrait">
-      {/* watermark */}
-      <Image src={"/blog/logo2.png"} style={styles.watermark} />
+      {/* PAGE 1 */}
+      <Page size="A4" style={styles.page} orientation="portrait">
+        {/* watermark */}
+        <Image src={"/blog/logo2.png"} style={styles.watermark} />
 
-      {/* header */}
-      <View style={styles.headerContainer}>
-        <View style={styles.leftHeader}>
-          <Image style={styles.logo} src={"/blog/Logo.png"} />
+        {/* header */}
+        <View style={styles.headerContainer}>
+          <View style={styles.leftHeader}>
+            <Image style={styles.logo} src={"/blog/Logo.png"} />
+          </View>
+
+          <Text style={styles.proposalTitle}>PROPOSAL</Text>
+
+          <View style={styles.rightHeader}>
+            <Text style={styles.companyTitle}>Promozione Branding Pvt Ltd</Text>
+            <Text>Vardhman Plaza, Rohini, New Delhi</Text>
+            <Text>Call us : 011 42603232</Text>
+            <Text>Email: info@promozionebranding.com</Text>
+            <Text>Website: www.promozionebranding.com</Text>
+          </View>
         </View>
 
-        <Text style={styles.proposalTitle}>PROPOSAL</Text>
-
-        <View style={styles.rightHeader}>
-          <Text style={styles.companyTitle}>Promozione Branding Pvt Ltd</Text>
-          <Text>Vardhman Plaza, Rohini, New Delhi</Text>
-          <Text>Call us : 011 42603232</Text>
-          <Text>Email: info@promozionebranding.com</Text>
-          <Text>Website: www.promozionebranding.com</Text>
+        {/* client details */}
+        <View style={styles.clientBox}>
+          <Text>To,</Text>
+          <Text>Client Name: {data.clientName}</Text>
+          <Text>Company name: {data.clientCompany}</Text>
+          <Text>Address: {data.clientAddress}</Text>
+          <Text>GST No.: {data.GSTIN}</Text>
+          <Text>Date: {proposalDate}</Text>
         </View>
-      </View>
 
-      {/* client details */}
-      <View style={styles.clientBox}>
-        <Text>To,</Text>
-        <Text>Client Name: {data.clientName}</Text>
-        <Text>Company name: {data.clientCompany}</Text>
-        <Text>Address: {data.clientAddress}</Text>
-        <Text>GST No.: {data.GSTIN}</Text>
-        <Text>Date: {proposalDate}</Text>
-      </View>
+        {/* table header */}
+        <View style={styles.tableRowHeader}>
+          <Text style={styles.colSN}>S.No.</Text>
+          <Text style={styles.colDesc}>Description</Text>
+          <Text style={styles.colNew}>Tenure</Text>
+          <Text style={styles.colNew}>Discount</Text>
+          <Text style={styles.colAmt}>Amount (INR)</Text>
+        </View>
 
-      {/* table header */}
-      <View style={styles.tableRowHeader}>
-        <Text style={styles.colSN}>S.No.</Text>
-        <Text style={styles.colDesc}>Description</Text>
-        <Text style={styles.colNew}>Tenure</Text>
-        <Text style={styles.colAmt}>Amount (INR)</Text>
-      </View>
-
-      {/* table 1 */}
-      {/* <View style={styles.tableRow}>
+        {/* table 1 */}
+        {/* <View style={styles.tableRow}>
         <Text style={styles.colSN}>1.</Text>
         <View style={styles.colDesc}>
           <Text style={styles.serviceTitle}>Service:</Text>
@@ -73,22 +85,40 @@ const ProposalPdfTemplate = ({ data }) => {
         <Text style={styles.colNew}>1 Year</Text>
         <Text style={styles.colAmt}>000000.00</Text>
       </View> */}
-      {/* Dynamically render services */}
-      {data.services &&
-        data.services.map((service, index) => (
-          <View style={styles.tableRow} key={service._id || index}>
-            <Text style={styles.colSN}>{index + 1}.</Text>
-            <View style={styles.colDesc}>
-              <Text style={styles.serviceTitle}>{service.serviceTitle}</Text>
-              <Text style={styles.serviceName}>{service.description}</Text>
-            </View>
-            <Text style={styles.colNew}>{service.duration}</Text>
-            <Text style={styles.colAmt}>{service.amount.toFixed(2)}</Text>
-          </View>
-        ))}
+        {/* Dynamically render services */}
+        {data.services &&
+          data.services.map((service, index) => (
+            <View style={styles.tableRow} key={service._id || index}>
+              <Text style={styles.colSN}>{index + 1}.</Text>
+              <View style={styles.colDesc}>
+                <Text style={styles.serviceTitle}>{service.serviceTitle}</Text>
+                {service.description.split(",").map((item, idx) => (
+                  <Text key={idx} style={styles.serviceName}>
+                    • {item}
+                  </Text>
+                ))}
+              </View>
+              <Text style={styles.colNew}>{service.duration}</Text>
+              <Text style={styles.colNew}>
+                {service.discountAmount
+                  ? service.discountAmount.toFixed(2)
+                  : service.discountPercentage && service.amount
+                  ? (
+                      (service.amount * service.discountPercentage) /
+                      100
+                    ).toFixed(2)
+                  : "N/A"}
+              </Text>
 
-      {/* table 2 */}
-      {/* <View style={styles.tableRow}>
+              <View style={styles.colAmt}>
+                <Text style={styles.colAmt}>{service?.amount - service?.discountAmount}</Text>
+                <Text style={{width:"30%",marginLeft:"30",textAlign: "center",fontWeight: "bold",textDecoration: 'line-through'}}>{service.amount}</Text>
+              </View>
+            </View>
+          ))}
+
+        {/* table 2 */}
+        {/* <View style={styles.tableRow}>
         <Text style={styles.colSN}>2.</Text>
 
         <View style={styles.colDesc}>
@@ -101,9 +131,9 @@ const ProposalPdfTemplate = ({ data }) => {
         <Text style={styles.colAmt}>00000.00</Text>
       </View> */}
 
-      {/* table 3 */}
+        {/* table 3 */}
 
-      {/* <View style={styles.tableRow}>
+        {/* <View style={styles.tableRow}>
         <Text style={styles.colSN}>3.</Text>
 
         <View style={styles.colDesc}>
@@ -115,9 +145,9 @@ const ProposalPdfTemplate = ({ data }) => {
 
         <Text style={styles.colAmt}>00000.00</Text>
       </View> */}
-      {/* table 4 */}
+        {/* table 4 */}
 
-      {/* <View style={styles.tableRow}>
+        {/* <View style={styles.tableRow}>
         <Text style={styles.colSN}>4.</Text>
 
         <View style={styles.colDesc}>
@@ -129,344 +159,367 @@ const ProposalPdfTemplate = ({ data }) => {
         <Text style={styles.colAmt}>0.00</Text>
       </View> */}
 
-      {/* total rows */}
-      {/* <View style={styles.totalBox}>
+        {/* total rows */}
+        {/* <View style={styles.totalBox}>
         <Text style={styles.totalLabel}>Total Price</Text>
         <Text style={styles.totalValue}>00000.00</Text>
         <Text style={styles.totalValue}>{data.totalAmount.toFixed(2)}</Text>
       </View> */}
 
-      {/* <View style={styles.totalBox}>
+        {/* <View style={styles.totalBox}>
         <Text style={styles.totalLabel}>Discount</Text>
         <Text style={styles.totalValue}>9,500.00</Text>
       </View> */}
 
-      {/* <View style={styles.totalBox}>
+        {/* <View style={styles.totalBox}>
       <View style={styles.totalBox}>
         <Text style={styles.totalLabel}>TDS (2%)</Text>
         <Text style={styles.totalValue}>2,800.00</Text>
       </View>
       </View> */}
 
-      <View style={styles.totalBox}>
-        <Text style={styles.totalLabel}>Deal Amount (Inc. GST)</Text>
-        <Text style={styles.totalValue}>
-          {/* 0000.00 */}
+        <View style={styles.totalBox}>
+          <Text style={styles.totalLabel}>Deal Amount (Inc. GST)</Text>
+          <Text style={styles.totalValue}>{/* 0000.00 */}</Text>
+          <Text style={styles.totalValue}>{data.totalAmount.toFixed(2)}</Text>
+        </View>
+
+        <View style={styles.totalBox}>
+          <Text style={styles.totalLabel}>GST @ 18%</Text>
+          <Text style={styles.totalValue}></Text>
+          <Text style={styles.totalValue}>
+            {(data.totalAmount * 0.18).toFixed(2)}
           </Text>
-        <Text style={styles.totalValue}>{data.totalAmount.toFixed(2)}</Text>
-      </View>
-
-      <View style={styles.totalBox}>
-        <Text style={styles.totalLabel}>GST @ 18%</Text>
-        <Text style={styles.totalValue}></Text>
-        <Text style={styles.totalValue}>{(data.totalAmount * 0.18).toFixed(2)}</Text>
-      </View>
-
-      <View style={styles.totalBox}>
-        <Text style={[styles.totalLabel, { fontWeight: "bold", fontSize: 10 }]}>
-          Total Payable Amount
-        </Text>
-        <Text style={[styles.totalValue, { fontWeight: "bold", fontSize: 10 }]}>
-          {/* 0000.00 */}
-        </Text>
-        <Text style={[styles.totalValue, { fontWeight: "bold", fontSize: 10 }]}>{(data.totalAmount * 1.18).toFixed(2)}</Text>
-      </View>
-
-      {/* terms */}
-      <View style={styles.termsBox}>
-        <Text>
-          • This is an application for Promozione Branding Private Limited
-          services. An order confirmation may be done on phone/email before
-          booking the order
-        </Text>
-
-        <Text>
-          • Please check all the details given in the proposal before approving,
-          there would not be any changes post deal confirmation.
-        </Text>
-
-        <Text>
-          • All online content including text & pictures are to be provided by
-          the client who should be the legal copyright owner of the same.
-          Promozione Branding shall not be liable for any claims/damages arising
-          out of content posted on your catalog
-        </Text>
-
-        <Text>
-          • Charges for subsequent years shall be as per the rate at that time,
-          which may be higher than the current charges.
-        </Text>
-        <Text>
-          • Work on services shall commence only after clearance of cheque/pay
-          order.
-        </Text>
-
-        <Text>
-          • Pursuant to the approval of this proposal, The Customer hereby
-          allows Promozione Branding Private Limited to make commercial calls on
-          its registered mobile number(s) and organization's contact number(s
-        </Text>
-
-        <Text>
-          • This declaration will hold valid even if the customer chooses to get
-          its numbers registered for NDNC at any future date.
-        </Text>
-        <Text>
-          • All services are offered without any performance guarantee in terms
-          of number of enquiries, confirmed orders etc.
-        </Text>
-      </View>
-    </Page>
-
-    {/* PAGE 2 */}
-    <Page size="A4" style={[styles.page, { height: "1000px" }]}>
-      <Image src={"/blog/logo2.png"} style={styles.watermark} />
-
-      {/* HEADER */}
-      <View style={styles.headerContainer}>
-        <View style={styles.leftHeader2}>
-          <Image style={styles.logoSmall} src={"/blog/Logo.png"} />
         </View>
 
-        <View style={styles.rightHeader2}>
-          <Text style={styles.companyTitle}>Promozione Branding Pvt Ltd</Text>
-          <Text>Vardhman Plaza, Rohini, New Delhi</Text>
-          <Text>Call us : 011 42603232</Text>
-          <Text>Email: info@promozionebranding.com</Text>
-          <Text>Website: www.promozionebranding.com</Text>
-        </View>
-      </View>
-
-      {/* BANK DETAILS */}
-      <View style={styles.bankBox}>
-        <Text>Note</Text>
-        <Text>
-          Cheque/Draft to be made in favor PROMOZIONE BRANDING PRIVATE LIMITED
-        </Text>
-        <Text>PAN No.: AAMCP6194C, CIN: U92112DL2024PTC432424</Text>
-        <Text>BANK ACCOUNT NO : 77770597710 BANK NAME : ICICI BANK</Text>
-        <Text>IFSC CODE : ICIC0000254</Text>
-      </View>
-
-      <View
-        style={{ textAlign: "left", color: "red", fontSize: 8, marginTop: 4 }}
-      >
-        <Text style={{ marginTop: 8 }}>
-          Regd. Office: Vardhman Plaza, Sector 3, Rohini, Delhi – 110085, India
-        </Text>
-        <Text>CIN: U92112DL2024PTC432424</Text>
-        <Text>011 42603232 • info@promozionebranding.com</Text>
-      </View>
-
-      {/* SECTION TITLE */}
-      <Text style={styles.sectionMainTitle}>
-        Service Offerings and Deliverables
-      </Text>
-
-      {/* WEBSITE */}
-      <View style={styles.sectionBox}>
-        <Text style={styles.sectionTitle}>Website</Text>
-        <View style={styles.deliverablesRow}>
-          <View style={styles.deliverableColumn}>
-            <Text style={styles.deliverableTitle}>Deliverables</Text>
-          </View>
-          <View style={styles.deliverableList}>
-            <Text style={styles.deliverableContent}>• Corporate Website</Text>
-            <Text style={styles.deliverableContent}>• Website Maintenance</Text>
-            <Text style={styles.deliverableContent}>
-              • Website Enrichment in 72 hr
-            </Text>
-            <Text style={styles.deliverableContent}>• Free Domain</Text>
-            <Text style={styles.deliverableContent}>
-              • Trust Elite Certificate
-            </Text>
-            <Text style={styles.deliverableContent}>• Blog Building</Text>
-            <Text style={styles.deliverableContent}>
-              • Free SSL certificate
-            </Text>
-            <Text style={styles.deliverableContent}>• 1 year Hosting</Text>
-            <Text style={styles.deliverableContent}>
-              • Mobile Friendly Website
-            </Text>
-          </View>
-        </View>
-      </View>
-
-      {/* SOCIAL MEDIA MANAGEMENT */}
-      <View style={styles.sectionBox}>
-        <Text style={styles.sectionTitle}>Social Media Management</Text>
-        <View style={styles.deliverablesRow}>
-          <View style={styles.deliverableColumn}>
-            <Text style={styles.deliverableTitle}>Deliverables</Text>
-          </View>
-          <View style={styles.deliverableList}>
-            <Text style={styles.deliverableContent}>
-              • 2 weekly Posts + Festive Posts
-            </Text>
-            <Text style={styles.deliverableContent}>
-              • Facebook Account Management
-            </Text>
-            <Text style={styles.deliverableContent}>
-              • Facebook Page Management
-            </Text>
-            <Text style={styles.deliverableContent}>
-              • Instagram Account Management
-            </Text>
-            <Text style={styles.deliverableContent}>
-              • Youtube Account Management
-            </Text>
-          </View>
-        </View>
-      </View>
-
-      {/* design */}
-      <View style={styles.sectionBox}>
-        <Text style={styles.sectionTitle}>Designing</Text>
-        <View style={styles.deliverablesRow}>
-          <View style={styles.deliverableColumn}>
-            <Text style={styles.deliverableTitle}>Deliverables</Text>
-          </View>
-          <View style={styles.deliverableList}>
-            <Text style={styles.deliverableContent}>• Logo Design</Text>
-            <Text style={styles.deliverableContent}>• AI Graphic Designs</Text>
-            <Text style={styles.deliverableContent}>• Content Creation</Text>
-            <Text style={styles.deliverableContent}>
-              • Product Visualization
-            </Text>
-            <Text style={styles.deliverableContent}>
-              • Search Engine Friendly
-            </Text>
-            <Text style={styles.deliverableContent}>• Customized layout</Text>
-          </View>
-        </View>
-      </View>
-
-      {/* SEO */}
-      <View style={styles.sectionBox}>
-        <Text style={styles.sectionTitle}>Search Engine Optimization</Text>
-        <View style={styles.deliverablesRow}>
-          <View style={styles.deliverableColumn}>
-            <Text style={styles.deliverableTitle}>Deliverables</Text>
-          </View>
-          <View style={styles.deliverableList}>
-            <Text style={styles.deliverableContent}>• Google Analytics</Text>
-            <Text style={styles.deliverableContent}>• Meta Integration</Text>
-            <Text style={styles.deliverableContent}>
-              • Google Search Console
-            </Text>
-            <Text style={styles.deliverableContent}>
-              • On page & Off page SEO
-            </Text>
-            <Text style={styles.deliverableContent}>• Backlinks Creation</Text>
-            <Text style={styles.deliverableContent}>• Website Ranking</Text>
-          </View>
-        </View>
-      </View>
-    </Page>
-
-    {/* page 3 */}
-
-    <Page size="A4" style={[styles.page, { height: "1000px" }]}>
-      <Image src={"/blog/logo2.png"} style={styles.watermark} />
-
-      {/* HEADER */}
-      <View style={styles.headerContainer}>
-        <View style={styles.leftHeader2}>
-          <Image style={styles.logoSmall} src={"/blog/Logo.png"} />
+        <View style={styles.totalBox}>
+          <Text
+            style={[styles.totalLabel, { fontWeight: "bold", fontSize: 10 }]}
+          >
+            Total Payable Amount
+          </Text>
+          <Text
+            style={[styles.totalValue, { fontWeight: "bold", fontSize: 10 }]}
+          >
+            {/* 0000.00 */}
+          </Text>
+          <Text
+            style={[styles.totalValue, { fontWeight: "bold", fontSize: 10 }]}
+          >
+            {(data.totalAmount * 1.18).toFixed(2)}
+          </Text>
         </View>
 
-        <View style={styles.rightHeader2}>
-          <Text style={styles.companyTitle}>Promozione Branding Pvt Ltd</Text>
-          <Text>Vardhman Plaza, Rohini, New Delhi</Text>
-          <Text>Call us : 011 42603232</Text>
-          <Text>Email: info@promozionebranding.com</Text>
-          <Text>Website: www.promozionebranding.com</Text>
+        {/* <View style={styles.totalBox}>
+        <Text style={[styles.totalLabelInWords]}>
+          Total Payable Amount(in words.)
+        </Text>
+        <Text style={[styles.totalValueInWords]}>{amountInWords}</Text>
+      </View> */}
+
+        {/* terms */}
+        <View style={styles.termsBox}>
+          <Text>
+            • This is an application for Promozione Branding Private Limited
+            services. An order confirmation may be done on phone/email before
+            booking the order
+          </Text>
+
+          <Text>
+            • Please check all the details given in the proposal before
+            approving, there would not be any changes post deal confirmation.
+          </Text>
+
+          <Text>
+            • All online content including text & pictures are to be provided by
+            the client who should be the legal copyright owner of the same.
+            Promozione Branding shall not be liable for any claims/damages
+            arising out of content posted on your catalog
+          </Text>
+
+          <Text>
+            • Charges for subsequent years shall be as per the rate at that
+            time, which may be higher than the current charges.
+          </Text>
+          <Text>
+            • Work on services shall commence only after clearance of cheque/pay
+            order.
+          </Text>
+
+          <Text>
+            • Pursuant to the approval of this proposal, The Customer hereby
+            allows Promozione Branding Private Limited to make commercial calls
+            on its registered mobile number(s) and organization's contact
+            number(s
+          </Text>
+
+          <Text>
+            • This declaration will hold valid even if the customer chooses to
+            get its numbers registered for NDNC at any future date.
+          </Text>
+          <Text>
+            • All services are offered without any performance guarantee in
+            terms of number of enquiries, confirmed orders etc.
+          </Text>
         </View>
-      </View>
+      </Page>
 
-      {/* TERMS HEADING */}
-      <View style={styles.termsHeaderBox}>
-        <Text style={styles.termsHeader}>Terms & Conditions</Text>
-      </View>
+      {/* PAGE 2 */}
+      <Page size="A4" style={[styles.page, { height: "1000px" }]}>
+        <Image src={"/blog/logo2.png"} style={styles.watermark} />
 
-      {/* TERMS LIST */}
-      <View style={styles.termsList}>
-        <Text style={styles.termItem}>
-          1) Promozione Branding Private Limited excludes any warranty, express
-          or implied, as to the quality, accuracy, timeliness, completeness,
-          performance, fitness, for a particular purpose of any of its contents,
-          hosted on any of Promozione Branding Private Limited servers, unless
-          otherwise specified in writing.
+        {/* HEADER */}
+        <View style={styles.headerContainer}>
+          <View style={styles.leftHeader2}>
+            <Image style={styles.logoSmall} src={"/blog/Logo.png"} />
+          </View>
+
+          <View style={styles.rightHeader2}>
+            <Text style={styles.companyTitle}>Promozione Branding Pvt Ltd</Text>
+            <Text>Vardhman Plaza, Rohini, New Delhi</Text>
+            <Text>Call us : 011 42603232</Text>
+            <Text>Email: info@promozionebranding.com</Text>
+            <Text>Website: www.promozionebranding.com</Text>
+          </View>
+        </View>
+
+        {/* BANK DETAILS */}
+        <View style={styles.bankBox}>
+          <Text>Note</Text>
+          <Text>
+            Cheque/Draft to be made in favor PROMOZIONE BRANDING PRIVATE LIMITED
+          </Text>
+          <Text>PAN No.: AAMCP6194C, CIN: U92112DL2024PTC432424</Text>
+          <Text>BANK ACCOUNT NO : 77770597710 BANK NAME : ICICI BANK</Text>
+          <Text>IFSC CODE : ICIC0000254</Text>
+        </View>
+
+        <View
+          style={{ textAlign: "left", color: "red", fontSize: 8, marginTop: 4 }}
+        >
+          <Text style={{ marginTop: 8 }}>
+            Regd. Office: Vardhman Plaza, Sector 3, Rohini, Delhi – 110085,
+            India
+          </Text>
+          <Text>CIN: U92112DL2024PTC432424</Text>
+          <Text>011 42603232 • info@promozionebranding.com</Text>
+        </View>
+
+        {/* SECTION TITLE */}
+        <Text style={styles.sectionMainTitle}>
+          Service Offerings and Deliverables
         </Text>
 
-        <Text style={styles.termItem}>
-          2) Promozione Branding Private Limited will not be liable for any
-          damages (including, without limitation, damages for loss of business
-          projects, or loss of profits) arising in contract, tort or otherwise
-          from the use of or inability to use any site or any of its contents.
-        </Text>
+        {/* WEBSITE */}
+        <View style={styles.sectionBox}>
+          <Text style={styles.sectionTitle}>Website</Text>
+          <View style={styles.deliverablesRow}>
+            <View style={styles.deliverableColumn}>
+              <Text style={styles.deliverableTitle}>Deliverables</Text>
+            </View>
+            <View style={styles.deliverableList}>
+              <Text style={styles.deliverableContent}>• Corporate Website</Text>
+              <Text style={styles.deliverableContent}>
+                • Website Maintenance
+              </Text>
+              <Text style={styles.deliverableContent}>
+                • Website Enrichment in 72 hr
+              </Text>
+              <Text style={styles.deliverableContent}>• Free Domain</Text>
+              <Text style={styles.deliverableContent}>
+                • Trust Elite Certificate
+              </Text>
+              <Text style={styles.deliverableContent}>• Blog Building</Text>
+              <Text style={styles.deliverableContent}>
+                • Free SSL certificate
+              </Text>
+              <Text style={styles.deliverableContent}>• 1 year Hosting</Text>
+              <Text style={styles.deliverableContent}>
+                • Mobile Friendly Website
+              </Text>
+            </View>
+          </View>
+        </View>
 
-        <Text style={styles.termItem}>
-          3) You indemnify Promozione Branding Private Limited of all claims,
-          conflicts or legal proceedings arising out of all information, data,
-          text, software, music, sound, photographs, graphics, videos, messages
-          or any other material ("content") posted on the website or privately
-          transmitted.
-        </Text>
+        {/* SOCIAL MEDIA MANAGEMENT */}
+        <View style={styles.sectionBox}>
+          <Text style={styles.sectionTitle}>Social Media Management</Text>
+          <View style={styles.deliverablesRow}>
+            <View style={styles.deliverableColumn}>
+              <Text style={styles.deliverableTitle}>Deliverables</Text>
+            </View>
+            <View style={styles.deliverableList}>
+              <Text style={styles.deliverableContent}>
+                • 2 weekly Posts + Festive Posts
+              </Text>
+              <Text style={styles.deliverableContent}>
+                • Facebook Account Management
+              </Text>
+              <Text style={styles.deliverableContent}>
+                • Facebook Page Management
+              </Text>
+              <Text style={styles.deliverableContent}>
+                • Instagram Account Management
+              </Text>
+              <Text style={styles.deliverableContent}>
+                • Youtube Account Management
+              </Text>
+            </View>
+          </View>
+        </View>
 
-        <Text style={styles.termItem}>
-          4) You are responsible for ensuring that material on your site
-          complies with National and International Laws.
-        </Text>
+        {/* design */}
+        <View style={styles.sectionBox}>
+          <Text style={styles.sectionTitle}>Designing</Text>
+          <View style={styles.deliverablesRow}>
+            <View style={styles.deliverableColumn}>
+              <Text style={styles.deliverableTitle}>Deliverables</Text>
+            </View>
+            <View style={styles.deliverableList}>
+              <Text style={styles.deliverableContent}>• Logo Design</Text>
+              <Text style={styles.deliverableContent}>
+                • AI Graphic Designs
+              </Text>
+              <Text style={styles.deliverableContent}>• Content Creation</Text>
+              <Text style={styles.deliverableContent}>
+                • Product Visualization
+              </Text>
+              <Text style={styles.deliverableContent}>
+                • Search Engine Friendly
+              </Text>
+              <Text style={styles.deliverableContent}>• Customized layout</Text>
+            </View>
+          </View>
+        </View>
 
-        <Text style={styles.termItem}>
-          5) Promozione Branding Private Limited reserves the right to add or
-          change these terms & conditions as and when required without giving
-          any notice. Changes will be deemed accepted if you continue to use the
-          services.
-        </Text>
+        {/* SEO */}
+        <View style={styles.sectionBox}>
+          <Text style={styles.sectionTitle}>Search Engine Optimization</Text>
+          <View style={styles.deliverablesRow}>
+            <View style={styles.deliverableColumn}>
+              <Text style={styles.deliverableTitle}>Deliverables</Text>
+            </View>
+            <View style={styles.deliverableList}>
+              <Text style={styles.deliverableContent}>• Google Analytics</Text>
+              <Text style={styles.deliverableContent}>• Meta Integration</Text>
+              <Text style={styles.deliverableContent}>
+                • Google Search Console
+              </Text>
+              <Text style={styles.deliverableContent}>
+                • On page & Off page SEO
+              </Text>
+              <Text style={styles.deliverableContent}>
+                • Backlinks Creation
+              </Text>
+              <Text style={styles.deliverableContent}>• Website Ranking</Text>
+            </View>
+          </View>
+        </View>
+      </Page>
 
-        <Text style={styles.termItem}>
-          6) Corporate Profile prepared by third-party agencies will be a
-          compilation of information of your organization. Promozione Branding
-          Private Limited will be authorized to use this information for
-          promotional purposes.
-        </Text>
+      {/* page 3 */}
 
-        <Text style={styles.termItem}>
-          7) Refund of any amount is at the sole discretion of the company.
-        </Text>
+      <Page size="A4" style={[styles.page, { height: "1000px" }]}>
+        <Image src={"/blog/logo2.png"} style={styles.watermark} />
 
-        <Text style={styles.termItem}>
-          8) Promozione Branding Private Limited may have an option to convert
-          your service to an annual service plan. If unable to pay the
-          outstanding amount, you may need to discontinue the service plan.
-        </Text>
+        {/* HEADER */}
+        <View style={styles.headerContainer}>
+          <View style={styles.leftHeader2}>
+            <Image style={styles.logoSmall} src={"/blog/Logo.png"} />
+          </View>
 
-        <Text style={styles.termItem}>
-          9) Promozione Branding Private Limited reserves the right to
-          add/modify/discontinue features offered with a service.
-        </Text>
+          <View style={styles.rightHeader2}>
+            <Text style={styles.companyTitle}>Promozione Branding Pvt Ltd</Text>
+            <Text>Vardhman Plaza, Rohini, New Delhi</Text>
+            <Text>Call us : 011 42603232</Text>
+            <Text>Email: info@promozionebranding.com</Text>
+            <Text>Website: www.promozionebranding.com</Text>
+          </View>
+        </View>
 
-        <Text style={styles.termItem}>
-          10) To ensure excellent customer service, your calls may be monitored
-          or recorded.
-        </Text>
+        {/* TERMS HEADING */}
+        <View style={styles.termsHeaderBox}>
+          <Text style={styles.termsHeader}>Terms & Conditions</Text>
+        </View>
 
-        <Text style={styles.termItem}>
-          11) Any discounts offered are subject to continuation of service for
-          the subscribed period. Early discontinuation will lead to charges as
-          per applicable rates.
-        </Text>
+        {/* TERMS LIST */}
+        <View style={styles.termsList}>
+          <Text style={styles.termItem}>
+            1) Promozione Branding Private Limited excludes any warranty,
+            express or implied, as to the quality, accuracy, timeliness,
+            completeness, performance, fitness, for a particular purpose of any
+            of its contents, hosted on any of Promozione Branding Private
+            Limited servers, unless otherwise specified in writing.
+          </Text>
 
-        <Text style={styles.termItem}>
-          12) By accepting this document, you agree to these terms and to the
-          Terms & Conditions of Use located at:
-          https://promozionebranding.com/terms/
-        </Text>
-      </View>
-    </Page>
-  </Document>
+          <Text style={styles.termItem}>
+            2) Promozione Branding Private Limited will not be liable for any
+            damages (including, without limitation, damages for loss of business
+            projects, or loss of profits) arising in contract, tort or otherwise
+            from the use of or inability to use any site or any of its contents.
+          </Text>
+
+          <Text style={styles.termItem}>
+            3) You indemnify Promozione Branding Private Limited of all claims,
+            conflicts or legal proceedings arising out of all information, data,
+            text, software, music, sound, photographs, graphics, videos,
+            messages or any other material ("content") posted on the website or
+            privately transmitted.
+          </Text>
+
+          <Text style={styles.termItem}>
+            4) You are responsible for ensuring that material on your site
+            complies with National and International Laws.
+          </Text>
+
+          <Text style={styles.termItem}>
+            5) Promozione Branding Private Limited reserves the right to add or
+            change these terms & conditions as and when required without giving
+            any notice. Changes will be deemed accepted if you continue to use
+            the services.
+          </Text>
+
+          <Text style={styles.termItem}>
+            6) Corporate Profile prepared by third-party agencies will be a
+            compilation of information of your organization. Promozione Branding
+            Private Limited will be authorized to use this information for
+            promotional purposes.
+          </Text>
+
+          <Text style={styles.termItem}>
+            7) Refund of any amount is at the sole discretion of the company.
+          </Text>
+
+          <Text style={styles.termItem}>
+            8) Promozione Branding Private Limited may have an option to convert
+            your service to an annual service plan. If unable to pay the
+            outstanding amount, you may need to discontinue the service plan.
+          </Text>
+
+          <Text style={styles.termItem}>
+            9) Promozione Branding Private Limited reserves the right to
+            add/modify/discontinue features offered with a service.
+          </Text>
+
+          <Text style={styles.termItem}>
+            10) To ensure excellent customer service, your calls may be
+            monitored or recorded.
+          </Text>
+
+          <Text style={styles.termItem}>
+            11) Any discounts offered are subject to continuation of service for
+            the subscribed period. Early discontinuation will lead to charges as
+            per applicable rates.
+          </Text>
+
+          <Text style={styles.termItem}>
+            12) By accepting this document, you agree to these terms and to the
+            Terms & Conditions of Use located at:
+            https://promozionebranding.com/terms/
+          </Text>
+        </View>
+      </Page>
+    </Document>
     // </Document>
   );
 };
@@ -582,15 +635,15 @@ const styles = StyleSheet.create({
   },
 
   colDesc: {
-    width: "30%",
+    width: "45%",
     paddingLeft: 5,
     fontWeight: "bold",
   },
 
   colAmt: {
-    width: "25%",
-    paddingRight: 5,
-    textAlign: "right",
+    width: "30%",
+    marginLeft:"30",
+    textAlign: "center",
     fontWeight: "bold",
   },
 
@@ -622,6 +675,22 @@ const styles = StyleSheet.create({
     fontWeight: "normal",
     fontSize: 8,
   },
+
+  totalLabelInWords: {
+    fontWeight: "bold",
+    fontSize: 10,
+    width: "40%",
+    textAlign: "left",
+  },
+
+  totalValueInWords: {
+    width: "60%",
+    textAlign: "right",
+
+    fontSize: 8,
+  },
+
+ 
 
   termsBox: {
     marginTop: 14,

@@ -10,7 +10,7 @@ export async function GET(req, context) {
     const proposal = await Proposal.findById(id).populate({
       path: "services",
       model: "Service",
-      select: "serviceTitle amount duration description",
+      select: "serviceTitle amount duration description discountAmount discountPercentage",
     });
 
     if (!proposal) {

@@ -4,6 +4,7 @@ import { pdfDownloadService } from "@/service/proposal";
 import { PDFViewer } from "@react-pdf/renderer";
 import React, { useEffect, useState } from "react";
 
+
 const ProposalPdf = ({ id }) => {
   const [loading, setLoading] = useState(true);
   const [pdfData, setPdfData] = useState({});
@@ -26,6 +27,7 @@ const ProposalPdf = ({ id }) => {
     fetchingPdfData(id);
   }, []);
 
+ 
 
   return (
     <>
@@ -36,7 +38,7 @@ const ProposalPdf = ({ id }) => {
           <PDFViewer
             style={{ height: "100%", width: "90%", overflow: "hidden" }}
           >
-            <ProposalPdfTemplate data={pdfData} />
+            <ProposalPdfTemplate data={pdfData}/>
           </PDFViewer>
         </div>
       )}
